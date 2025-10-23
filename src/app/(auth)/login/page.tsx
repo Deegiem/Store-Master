@@ -27,7 +27,7 @@ export default function LoginPage() {
         else router.push("/dashboard/staff")
       } else {
         // fallback
-        router.push("/dashboard")
+        router.push("/")
       }
     }, 300)
   }
