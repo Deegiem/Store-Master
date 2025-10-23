@@ -1,19 +1,11 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import { getCurrentUser } from "@/services/userService";
+import { User } from "@/types/user";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  createdAt?: string;
-}
-
-export default function UsersPage() {
+export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,23 +15,12 @@ export default function UsersPage() {
     const fetchUser = async () => {
       try {
         setLoading(true);
-
-        const token = localStorage.getItem("token");
-        if (!token) {
-          router.push("/login");
-          return;
-        }
-
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setUser(res.data);
-      } catch (err: unknown) {
+        const data = await getCurrentUser();
+        setUser(data);
+      } catch (err) {
         console.error(err);
-        setError("Failed to load user data.");
+        setError("Failed to load profile. Redirecting to login...");
+        setTimeout(() => router.push("/login"), 500);
       } finally {
         setLoading(false);
       }
@@ -48,52 +29,31 @@ export default function UsersPage() {
     fetchUser();
   }, [router]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-gray-600 text-lg animate-pulse">Loading profile...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-red-500 font-medium">{error}</p>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
+  if (loading) return <div className="p-6 text-center">Loading profile...</div>;
+  if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
+  if (!user) return null;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
-      <div className="bg-white shadow-lg rounded-2xl p-8 max-w-md w-full">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">👤 User Profile</h1>
-
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-lg">
+        <h1 className="text-2xl font-semibold text-gray-800 mb-6">User Profile</h1>
         <div className="space-y-3 text-gray-700">
-          <p><span className="font-semibold">Name:</span> {user.name}</p>
-          <p><span className="font-semibold">Email:</span> {user.email}</p>
-          <p><span className="font-semibold">Role:</span> {user.role}</p>
-          {user.createdAt && (
-            <p>
-              <span className="font-semibold">Member Since:</span>{" "}
-              {new Date(user.createdAt).toLocaleDateString()}
-            </p>
-          )}
+          <p><span className="font-medium">First Name:</span> {user.first_name}</p>
+          <p><span className="font-medium">Last Name:</span> {user.last_name}</p>
+          <p><span className="font-medium">Email:</span> {user.email}</p>
+          <p><span className="font-medium">Role:</span> {user.role}</p>
+          <p><span className="font-medium">Email Status:</span> {user.email_status}</p>
+          <p><span className="font-medium">Phone:</span> {user.phone_number ?? "N/A"}</p>
+          <p><span className="font-medium">Address:</span> {user.address ?? "N/A"}</p>
+          <p><span className="font-medium">State:</span> {user.state ?? "N/A"}</p>
+          <p><span className="font-medium">Country:</span> {user.country ?? "N/A"}</p>
+          <hr className="my-4" />
+          <p className="text-sm text-gray-500">
+            Joined on {new Date(user.created_at).toLocaleDateString()}  
+            <br />
+            Last updated {new Date(user.updated_at).toLocaleString()}
+          </p>
         </div>
-
-        <button
-          onClick={() => {
-            localStorage.removeItem("token");
-            router.push("/login");
-          }}
-          className="mt-6 w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition"
-        >
-          Logout
-        </button>
       </div>
     </div>
   );
