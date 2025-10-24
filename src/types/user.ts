@@ -4,7 +4,7 @@ export interface User {
   first_name: string;
   last_name: string;
   email: string;
-  role: "admin" | "employee" | "manager" | string; // flexible for future roles
+  role: "admin" | "manager" | "staff";
   phone_number: string | null;
   address: string | null;
   state: string | null;
@@ -12,4 +12,9 @@ export interface User {
   email_status: "active" | "inactive" | string;
   created_at: string;
   updated_at: string;
+}
+
+export interface UsersResponse {
+  count: number;
+  data: User[];
 }

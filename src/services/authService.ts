@@ -86,3 +86,5 @@ export const authService = {
     }
   },
 };
+
+export const readRoot = () => api.get("/");

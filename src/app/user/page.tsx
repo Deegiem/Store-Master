@@ -20,7 +20,7 @@ export default function ProfilePage() {
       } catch (err) {
         console.error(err);
         setError("Failed to load profile. Redirecting to login...");
-        setTimeout(() => router.push("/login"), 500);
+        //setTimeout(() => router.push("/login"), 500);
       } finally {
         setLoading(false);
       }

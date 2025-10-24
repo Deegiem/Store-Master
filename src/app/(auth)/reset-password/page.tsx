@@ -8,15 +8,13 @@ import { useRouter } from "next/navigation";
 export default function ResetPasswordPage() {
   const router = useRouter();
   const { resetPassword, isLoading, successMessage, errorMessage } = useAuthStore();
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await resetPassword({ email, otp, new_password: newPassword });
+    await resetPassword({ new_password: newPassword });
 
   // Wait for store to update
   setTimeout(() => {
@@ -36,26 +34,6 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center text-black bg-gray-50 p-4">
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md space-y-4">
         <h2 className="text-xl font-semibold text-center">Reset Password</h2>
-
-        <input
-          type="email"
-          name="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Registered email"
-          required
-          className="w-full border px-3 py-2 rounded"
-        />
-
-        <input
-          type="text"
-          name="otp"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          placeholder="OTP code"
-          required
-          className="w-full border px-3 py-2 rounded"
-        />
 
         <input
           type="password"

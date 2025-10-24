@@ -66,8 +66,6 @@ export interface CreatePasswordResponse {
 }
 
 export interface ResetPasswordPayload {
-  email: string
-  otp: string
   new_password: string;
 }
 
