@@ -5,13 +5,19 @@ import { useAuthStore } from "@/store/useAuthStore"
 import { motion } from "framer-motion"
 import { Loader2 } from "lucide-react"
 
+// import { useRouter } from "next/router"
+
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
-  const { forgotPassword, isLoading, successMessage, errorMessage } = useAuthStore()
+  const { forgotPassword, isLoading } = useAuthStore();
+    const successMessage = useAuthStore((state) => state.successMessage);
+    const errorMessage = useAuthStore((state) => state.errorMessage);
+  // const router = useRouter();  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     await forgotPassword({ email })
+    // router.push("/verify-reset-otp")
   }
 
   return (

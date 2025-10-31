@@ -21,10 +21,376 @@
 //   )
 // }
 
-export default function HomePage() {
+// export default function HomePage() {
+//   return (
+//     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+//       <h1 className="text-3xl font-bold text-gray-800">Welcome to the Inventory Management System</h1>
+//     </div>
+//   )
+// }
+
+// src/app/page.tsx
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// "use client";
+
+// import { motion } from "framer-motion";
+// import Link from "next/link";
+
+// export default function HomePage() {
+//   return (
+//     <main className="min-h-screen flex flex-col text-gray-800">
+//       {/* ===== Hero Section ===== */}
+//       <section className="relative bg-gradient-to-br from-[#000ac0] to-blue-700 text-white py-24 px-6 text-center">
+//         <motion.div
+//           initial={{ opacity: 0, y: 20 }}
+//           animate={{ opacity: 1, y: 0 }}
+//           transition={{ duration: 0.8 }}
+//           className="max-w-4xl mx-auto"
+//         >
+//           <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+//             Store Master
+//           </h1>
+//           <p className="text-lg md:text-xl mb-10 font-light text-blue-100">
+//             Smart inventory control for modern businesses.
+//           </p>
+//           <div className="flex justify-center gap-4">
+//             <Link
+//               href="/register"
+//               className="bg-white text-[#000ac0] font-semibold px-6 py-3 rounded-lg shadow hover:bg-blue-50 transition"
+//             >
+//               Register
+//             </Link>
+//             <Link
+//               href="/login"
+//               className="bg-transparent border border-white text-white font-semibold px-6 py-3 rounded-lg hover:bg-white hover:text-[#000ac0] transition"
+//             >
+//               Login
+//             </Link>
+//           </div>
+//         </motion.div>
+//       </section>
+
+//       {/* ===== Features ===== */}
+//       <section className="py-20 px-6 bg-gray-50 text-center">
+//         <h2 className="text-3xl font-bold mb-10 text-[#000ac0]">
+//           Why Choose Store Master?
+//         </h2>
+//         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+//           {[
+//             {
+//               title: "Real-Time Tracking",
+//               desc: "Monitor inventory levels and supplier data in real time for smarter decision-making.",
+//             },
+//             {
+//               title: "Streamlined Supplier Management",
+//               desc: "Manage your supplier relationships and orders with ease and clarity.",
+//             },
+//             {
+//               title: "Data-Driven Insights",
+//               desc: "Get analytics and visual dashboards to forecast trends and optimize stock.",
+//             },
+//           ].map((f, i) => (
+//             <motion.div
+//               key={i}
+//               initial={{ opacity: 0, y: 30 }}
+//               whileInView={{ opacity: 1, y: 0 }}
+//               viewport={{ once: true }}
+//               transition={{ delay: i * 0.2 }}
+//               className="bg-white rounded-2xl shadow-md p-8 hover:shadow-lg transition"
+//             >
+//               <h3 className="text-xl font-semibold mb-3 text-[#000ac0]">
+//                 {f.title}
+//               </h3>
+//               <p className="text-gray-600">{f.desc}</p>
+//             </motion.div>
+//           ))}
+//         </div>
+//       </section>
+
+//       {/* ===== How It Works ===== */}
+//       <section className="py-20 px-6 bg-white text-center">
+//         <h2 className="text-3xl font-bold mb-10 text-[#000ac0]">How It Works</h2>
+//         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+//           {[
+//             {
+//               step: "1",
+//               title: "Create an Account",
+//               desc: "Sign up as a business or store manager to access your dashboard.",
+//             },
+//             {
+//               step: "2",
+//               title: "Add Products & Suppliers",
+//               desc: "Register your products and suppliers seamlessly in minutes.",
+//             },
+//             {
+//               step: "3",
+//               title: "Track & Analyze",
+//               desc: "Monitor purchases, approvals, and performance with intuitive analytics.",
+//             },
+//           ].map((h, i) => (
+//             <motion.div
+//               key={i}
+//               initial={{ opacity: 0, y: 30 }}
+//               whileInView={{ opacity: 1, y: 0 }}
+//               viewport={{ once: true }}
+//               transition={{ delay: i * 0.2 }}
+//               className="p-8 border-t-4 border-[#000ac0] bg-gray-50 rounded-xl shadow-sm"
+//             >
+//               <div className="text-4xl font-bold text-[#000ac0] mb-3">
+//                 {h.step}
+//               </div>
+//               <h3 className="text-xl font-semibold mb-2">{h.title}</h3>
+//               <p className="text-gray-600">{h.desc}</p>
+//             </motion.div>
+//           ))}
+//         </div>
+//       </section>
+
+//       {/* ===== Reviews ===== */}
+//       <section className="py-20 px-6 bg-gray-50 text-center">
+//         <h2 className="text-3xl font-bold mb-10 text-[#000ac0]">
+//           What Our Users Say
+//         </h2>
+//         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+//           {[
+//             {
+//               name: "Aisha Bello",
+//               role: "Operations Manager",
+//               quote:
+//                 "Store Master has completely simplified our stock and supplier management. It’s fast, accurate, and intuitive.",
+//             },
+//             {
+//               name: "Emeka Okafor",
+//               role: "Procurement Lead",
+//               quote:
+//                 "A must-have for every modern business. The analytics and purchase approval flow save us hours weekly.",
+//             },
+//             {
+//               name: "Fatima Yusuf",
+//               role: "Store Supervisor",
+//               quote:
+//                 "The real-time dashboard gives me full visibility over inventory. Highly recommend!",
+//             },
+//           ].map((r, i) => (
+//             <motion.div
+//               key={i}
+//               initial={{ opacity: 0, y: 30 }}
+//               whileInView={{ opacity: 1, y: 0 }}
+//               viewport={{ once: true }}
+//               transition={{ delay: i * 0.2 }}
+//               className="bg-white p-8 rounded-2xl shadow-md hover:shadow-lg transition"
+//             >
+//               <p className="italic text-gray-700 mb-4">“{r.quote}”</p>
+//               <h4 className="font-semibold text-[#000ac0]">{r.name}</h4>
+//               <span className="text-sm text-gray-500">{r.role}</span>
+//             </motion.div>
+//           ))}
+//         </div>
+//       </section>
+
+//       {/* ===== Footer ===== */}
+//       <footer className="bg-[#000ac0] text-white py-10 px-6 text-center">
+//         <p className="text-lg font-semibold">Store Master</p>
+//         <p className="text-sm text-blue-100 mt-2">
+//           © {new Date().getFullYear()} Store Master. All rights reserved.
+//         </p>
+//       </footer>
+//     </main>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"use client";
+
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { CheckCircle } from "lucide-react";
+
+export default function LandingPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-      <h1 className="text-3xl font-bold text-gray-800">Welcome to the Inventory Management System</h1>
+    <div 
+      style={{
+    backgroundImage: "url('/public/hero-bg.jpg')",
+  }}
+    className="min-h-screen flex flex-col font-sans">
+      {/* Hero Section */}
+      <section className="bg-[#000ac0] text-white py-24 px-6 text-center">
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-4xl md:text-6xl font-bold mb-6"
+        >
+          Store Master
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+          className="text-lg md:text-xl mb-8 max-w-2xl mx-auto"
+        >
+          Smart inventory control for modern businesses. Simplify, optimize, and grow with ease.
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.6 }}
+          className="flex justify-center gap-4"
+        >
+          <Link href="/register">
+            <Button className="bg-white text-[#000ac0] font-semibold hover:bg-gray-100">
+              Get Started
+            </Button>
+          </Link>
+          <Link href="/login">
+            <Button variant="outline" className="border-white  text-white bg-[#000ac0] hover:bg-white hover:text-[#000ac0]">
+              Login
+            </Button>
+          </Link>
+        </motion.div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 px-6 bg-gray-50 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#000ac0] mb-12">Powerful Features</h2>
+        <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+          {[
+            {
+              title: "Automated Inventory Tracking",
+              desc: "Monitor stock levels, sales, and supplier data in real-time.",
+            },
+            {
+              title: "Advanced Analytics",
+              desc: "Gain insights into your business performance with intuitive dashboards.",
+            },
+            {
+              title: "Multi-User Access",
+              desc: "Assign roles and manage staff access securely.",
+            },
+          ].map((f, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.6, duration: 0.6 }}
+              className="bg-white p-8 rounded-2xl shadow-sm border hover:shadow-md transition"
+            >
+              <CheckCircle className="text-[#000ac0] w-10 h-10 mb-4 mx-auto" />
+              <h3 className="font-semibold text-xl mb-2">{f.title}</h3>
+              <p className="text-gray-600">{f.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-20 px-6 text-center bg-white">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#000ac0] mb-12">How It Works</h2>
+        <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+          {[
+            {
+              step: "1",
+              title: "Register Your Account",
+              desc: "Create your profile and set up your business preferences.",
+            },
+            {
+              step: "2",
+              title: "Add Products & Suppliers",
+              desc: "Easily input or import your inventory and supplier details.",
+            },
+            {
+              step: "3",
+              title: "Track & Grow",
+              desc: "Monitor inventory flow, automate purchases, and maximize efficiency.",
+            },
+          ].map((h, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.6, duration: 0.5 }}
+              className="p-8 border rounded-2xl shadow-sm bg-gray-50 hover:shadow-md transition"
+            >
+              <div className="text-5xl font-bold text-[#000ac0] mb-4">{h.step}</div>
+              <h3 className="font-semibold text-xl mb-2">{h.title}</h3>
+              <p className="text-gray-600">{h.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Reviews */}
+      <section className="py-20 px-6 bg-gray-50 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#000ac0] mb-12">What Our Users Say</h2>
+        <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+          {[
+            {
+              name: "Aisha B.",
+              comment:
+                "Store Master has completely changed the way we manage stock. Everything is so seamless now!",
+            },
+            {
+              name: "Tunde O.",
+              comment: "The analytics dashboard helps me make data-driven decisions effortlessly.",
+            },
+            {
+              name: "Grace K.",
+              comment: "Setup was easy and intuitive. I recommend Store Master to every business owner!",
+            },
+          ].map((r, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.6, duration: 0.5 }}
+              className="bg-white p-6 rounded-2xl border shadow-sm"
+            >
+              <p className="italic text-gray-600 mb-4">“{r.comment}”</p>
+              <h4 className="font-semibold text-[#000ac0]">{r.name}</h4>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-[#000ac0] text-white py-10 px-6 text-center">
+        <p className="text-sm mb-2">&copy; {new Date().getFullYear()} Store Master. All rights reserved.</p>
+        <p className="text-sm">Designed with excellence for the next generation of business efficiency.</p>
+      </footer>
     </div>
-  )
+  );
 }

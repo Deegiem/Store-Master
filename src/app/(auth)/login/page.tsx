@@ -5,36 +5,43 @@ import { useState } from "react"
 import { useAuthStore } from "@/store/useAuthStore"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { motion } from "framer-motion";
 import { Checkbox } from "@/components/ui/checkbox"
 
 export default function LoginPage() {
   const router = useRouter()
-  const { login, isLoading, errorMessage } = useAuthStore()
+  const { login, isLoading, rememberMe, setRememberMe } = useAuthStore();
+  const successMessage = useAuthStore((state) => state.successMessage);
+  const errorMessage = useAuthStore((state) => state.errorMessage);
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const { rememberMe, setRememberMe } = useAuthStore()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    await login({ email, password })
-    // read user from store (since login sets it). Small timeout to allow store to update.
-    setTimeout(() => {
-      const u = (useAuthStore.getState()).user
-      if (u?.role) {
-        // redirect based on role
-        if (u.role === "admin") router.push("/dashboard/admin")
-        else if (u.role === "manager") router.push("/dashboard/manager")
-        else router.push("/dashboard/staff")
-      } else {
-        // fallback
-        router.push("/")
-      }
-    }, 300)
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const user = await login({ email, password }, rememberMe);
+  if (!user) return; // stop if login failed
+
+  switch (user.role) {
+    case "admin":
+      router.push("/dashboard/admin");
+      break;
+    case "store manager":
+      router.push("/dashboard/manager");
+      break;
+    case "sales staff":
+      router.push("/dashboard/salesStaff");
+      break;
+    default:
+      router.push("/");
   }
+};
+
+
 
   return (
     <div className="h-screen flex items-center justify-center text-black bg-gray-50 p-4">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md space-y-4">
+      <motion.form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md space-y-4">
         <h1 className="text-2xl font-semibold text-center">Login</h1>
 
         <input
@@ -58,7 +65,7 @@ export default function LoginPage() {
         <div className="flex items-center justify-between">
           <label className="flex items-center text-neutral-700 gap-2 text-sm">
             <Checkbox checked={rememberMe} onCheckedChange={(checked) => setRememberMe(checked === true)}
- />
+          />
             Remember me
           </label>
 
@@ -70,7 +77,8 @@ export default function LoginPage() {
         </button>
 
         {errorMessage && <p className="text-red-600 text-center mt-2">{errorMessage}</p>}
-      </form>
+        {successMessage && <p className="text-green-600 text-center mt-2">{successMessage}</p>}
+      </motion.form>
     </div>
   )
 }

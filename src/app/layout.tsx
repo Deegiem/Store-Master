@@ -1,5 +1,7 @@
 // app/layout.tsx
 import "./globals.css"
+import Providers from "./providers"
+
 import { Inter } from "next/font/google"
 import { Toaster } from "sonner"
 
@@ -16,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-       {children}
+        <Providers>{children}</Providers>
         <Toaster richColors position="top-right" />
       </body>
     </html>

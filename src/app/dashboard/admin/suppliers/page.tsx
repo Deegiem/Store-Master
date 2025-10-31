@@ -1,38 +1,35 @@
-"use client"
+// src/app/dashboard/admin/suppliers/page.tsx
+import React from "react";
+import AddSupplierForm from "@/components/suppliers/AddSupplierForm";
+import SupplierListAdmin from "@/components/suppliers/SupplierListAdmin";
+import SupplierDetails from "@/components/suppliers/SupplierDetails";
 
-import { useEffect } from "react"
-import { useSupplierStore } from "@/store/supplierStore"
-
-export default function SuppliersDashboard() {
-  const { suppliers, fetchSuppliers, loading, error } = useSupplierStore()
-
-  useEffect(() => {
-    fetchSuppliers()
-  }, [fetchSuppliers])
-
+export default function SuppliersPage() {
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-semibold">Suppliers Overview</h2>
-      <p className="text-gray-600">Manage your suppliers efficiently.</p>
+    <div className="space-y-6 p-6">
+      <header className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Suppliers</h1>
+          <p className="text-sm text-gray-500">Create, update, and manage suppliers from a single consolidated interface.</p>
+        </div>
+      </header>
 
-      {loading && <p>Loading suppliers...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {suppliers.map((supplier) => (
-          <div
-            key={supplier.supplier_id}
-            className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition"
-          >
-            <h3 className="font-semibold text-gray-800">
-              {supplier.supplier_name}
-            </h3>
-            <p className="text-gray-600 text-sm">{supplier.company_name}</p>
-            <p className="text-gray-500 text-sm mt-1">{supplier.email}</p>
-            <p className="text-gray-500 text-sm">{supplier.phone}</p>
+      <main className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section className="lg:col-span-2 space-y-4">
+          <div>
+            <AddSupplierForm />
           </div>
-        ))}
-      </div>
+
+          <div>
+            <SupplierListAdmin />
+          </div>
+        </section>
+
+        <aside className="space-y-4">
+          <div><p>Selected Supplier</p></div>
+          <SupplierDetails />
+        </aside>
+      </main>
     </div>
-  )
+  );
 }

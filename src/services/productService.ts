@@ -11,7 +11,12 @@ export const productService = {
 
   // Fetch all products
   getAll: async (): Promise<Product[]> => {
-    const res = await api.get("/products");
+    const res = await api.get<Product[]>("/products");
+    return res.data;
+  },
+
+  getByCategory: async (category_id: string): Promise<Product[]> => {
+    const res = await api.get(`/products/category/${category_id}`);
     return res.data;
   },
 
@@ -27,3 +32,5 @@ export const productService = {
     return res.data;
   },
 };
+
+

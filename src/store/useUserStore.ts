@@ -1,41 +1,58 @@
 // store/useUserStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { getAllUsers } from "@/services/userService";
-import { User } from "@/types/user";
+import { getAllUsers, getCurrentUser, updateProfile } from "@/services/userService";
+import { User, UpdateProfilePayload } from "@/types/user";
 
 interface UserState {
-  user: string | null;
-  role: string | null;
+  currentUser: User | null;
   users: User[];
   loading: boolean;
   error: string | null;
-  clearUser: () => void;
-  setUser: (user: string, role: string) => void;
+
+  fetchCurrentUser: () => Promise<void>;
   fetchAllUsers: () => Promise<void>;
+  editProfile: (payload: UpdateProfilePayload) => Promise<void>;
 }
 
 export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
+      currentUser: null,
       users: [],
       loading: false,
       error: null,
-      user: null,
-      role: null,
 
-      setUser: (user, role) => set({ user, role }),
-      clearUser: () => set({ user: null, role: null }),
+      fetchCurrentUser: async () => {
+        set({ loading: true, error: null });
+        try {
+          const user = await getCurrentUser();
+          set({ currentUser: user, loading: false });
+        } catch (error: unknown) {
+          const err = error instanceof Error ? error.message : "Failed to fetch user";
+          set({ error: err, loading: false });
+        }
+      },
 
       fetchAllUsers: async () => {
+        set({ loading: true, error: null });
         try {
-          set({ loading: true, error: null });
           const res = await getAllUsers();
-          set({ users: res.data, loading: false });
+          set({ users: res.users, loading: false });
         } catch (error: unknown) {
-          const err =
-            error instanceof Error ? error.message : "An error occurred";
-          set({ loading: false, error: err });
+          const err = error instanceof Error ? error.message : "Failed to fetch users";
+          set({ error: err, loading: false });
+        }
+      },
+
+      editProfile: async (payload: UpdateProfilePayload) => {
+        set({ loading: true, error: null });
+        try {
+          const updatedUser = await updateProfile(payload);
+          set({ currentUser: updatedUser, loading: false });
+        } catch (error: unknown) {
+          const err = error instanceof Error ? error.message : "Failed to update profile";
+          set({ error: err, loading: false });
         }
       },
     }),

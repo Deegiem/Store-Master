@@ -1,48 +1,49 @@
-import { create } from "zustand"
-import { saleService } from "@/services/saleService"
-import { Sale } from "@/types/sale"
+import { create } from "zustand";
+import { SaleRecord, CreateSalePayload } from "@/types/sale";
+import { salesService } from "@/services/saleService";
 
-interface SaleStore {
-  sales: Sale[]
-  loading: boolean
-  error: string | null
+interface SalesStore {
+  sales: SaleRecord[];
+  loading: boolean;
+  error: string | null;
 
-  fetchSales: () => Promise<void>
-  recordSale: (data: Omit<Sale, "sale_id" | "sold_at" | "remaining_quantity">) => Promise<void>
+  fetchSales: () => Promise<void>;
+  createSale: (payload: CreateSalePayload) => Promise<void>;
+  fetchSalesByProductId: (product_id: string) => Promise<void>;
 }
 
-export const useSaleStore = create<SaleStore>((set, get) => ({
+export const useSalesStore = create<SalesStore>((set) => ({
   sales: [],
   loading: false,
   error: null,
 
   fetchSales: async () => {
-    set({ loading: true, error: null })
+    set({ loading: true, error: null });
     try {
-      const data = await saleService.getAll()
-      set({ sales: data })
-    } catch (error: unknown) {
-  set({
-    loading: false,
-    error: error instanceof Error ? error.message : "An unexpected error occurred.",
-  });
-} finally {
-      set({ loading: false })
+      const res = await salesService.getAllSales();
+      set({ sales: res.data, loading: false });
+    } catch (err: any) {
+      set({ error: err.message || "Failed to fetch sales", loading: false });
     }
   },
 
-  recordSale: async (data) => {
-    set({ loading: true, error: null })
+  createSale: async (payload) => {
+    set({ loading: true, error: null });
     try {
-      await saleService.sell(data)
-      await get().fetchSales()
-    } catch (error: unknown) {
-  set({
-    loading: false,
-    error: error instanceof Error ? error.message : "An unexpected error occurred.",
-  });
-} finally {
-      set({ loading: false })
+      await salesService.createSale(payload);
+      set({ loading: false });
+    } catch (err: any) {
+      set({ error: err.message || "Failed to create sale", loading: false });
     }
   },
-}))
+
+  fetchSalesByProductId: async (product_id) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await salesService.getSalesByProductId(product_id);
+      set({ sales: res.data, loading: false });
+    } catch (err: any) {
+      set({ error: err.message || "Failed to fetch sales", loading: false });
+    }
+  },
+}));

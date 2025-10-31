@@ -1,28 +1,35 @@
-import { api } from "@/lib/api"
-import { Supplier } from "@/types/supplier"
+// src/services/supplierService.ts
+import { api } from "@/lib/api";
+import {
+  CreateSupplierPayload,
+  UpdateSupplierPayload,
+  SupplierResponse,
+  Supplier,
+} from "@/types/supplier";
 
 export const supplierService = {
-  // Get all suppliers
-  async getAll(): Promise<Supplier[]> {
-    const response = await api.get("/suppliers")
-    return response.data
+  async getAll(): Promise<SupplierResponse> {
+    const res = await api.get("/suppliers");
+    return res.data;
   },
 
-  // Get supplier by ID
-  async getById(supplier_id: string): Promise<Supplier> {
-    const response = await api.get(`/suppliers/${supplier_id}`)
-    return response.data
+  async getById(id: string): Promise<Supplier> {
+    const res = await api.get(`/suppliers/${id}`);
+    return res.data;
   },
 
-  // Add supplier
-  async create(data: Omit<Supplier, "supplier_id" | "created_at">): Promise<Supplier> {
-    const response = await api.post("/suppliers", data)
-    return response.data
+  async create(payload: CreateSupplierPayload) {
+    const res = await api.post("/suppliers", payload);
+    return res.data;
   },
 
-  // Delete supplier
-  async delete(supplier_id: string): Promise<string> {
-    const response = await api.delete(`/suppliers/${supplier_id}`)
-    return response.data
+  async update(id: string, payload: UpdateSupplierPayload) {
+    const res = await api.put(`/suppliers/${id}`, payload);
+    return res.data;
   },
-}
+
+  async remove(id: string) {
+    const res = await api.delete(`/suppliers/${id}`);
+    return res.data;
+  },
+};

@@ -22,11 +22,11 @@ export interface OtpPayload {
 
 export interface VerifyOtpResponse {
   message: string;
-  token?: string; // optional if the backend returns a session token
+  access_token: string; // optional if the backend returns a session token
   user?: {
     id: string;
     name: string;
-    role: "admin" | "manager" | "staff";
+    role: "admin" | "store manager" | "sales taff";
   };
   success?: boolean;
   errorMessage?: string; // optional for client-side error handling
@@ -41,13 +41,19 @@ export interface LoginPayload {
 export interface LoginResponse {
   message: string;
   token?: string;
-  user: {
-    id: string;
-    name: string;
+  token_type?: string;
+  profile: {
+    first_name: string;
+    last_name: string;
     email: string;
-    role: "admin" | "manager" | "staff";
+    phone_number?: string | null;
+    address?: string | null;
+    state?: string | null;
+    country?: string | null;
+    role: "admin" | "store manager" | "sales staff";
   };
 }
+
 
 export interface CreatePasswordPayload {
   password: string
@@ -56,7 +62,7 @@ export interface CreatePasswordPayload {
 
 export interface CreatePasswordResponse {
   message: string
-  token?: string
+  access_token?: string
   user?: {
     id: string
     name: string

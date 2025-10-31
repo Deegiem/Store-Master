@@ -1,66 +1,78 @@
-import { create } from "zustand"
-import { Supplier } from "@/types/supplier"
-import { supplierService } from "@/services/supplierService"
+// src/store/supplierStore.ts
+import { create } from "zustand";
+import { supplierService } from "@/services/supplierService";
+import type {
+  Supplier,
+  CreateSupplierPayload,
+  UpdateSupplierPayload,
+} from "@/types/supplier";
 
-interface SupplierStore {
-  suppliers: Supplier[]
-  loading: boolean
-  error: string | null
-
-  fetchSuppliers: () => Promise<void>
-  addSupplier: (data: Omit<Supplier, "supplier_id" | "created_at">) => Promise<void>
-  deleteSupplier: (supplier_id: string) => Promise<void>
+interface SupplierState {
+  suppliers: Supplier[];
+  selectedSupplier: Supplier | null;
+  isLoading: boolean;
+  error: string | null;
+  fetchSuppliers: () => Promise<void>;
+  addSupplier: (payload: CreateSupplierPayload) => Promise<void>;
+  updateSupplier: (supplier_id: string, payload: UpdateSupplierPayload) => Promise<void>;
+  deleteSupplier: (supplier_id: string) => Promise<void>;
+  setSelectedSupplier: (supplier: Supplier | null) => void;
 }
 
-export const useSupplierStore = create<SupplierStore>((set, get) => ({
+export const SupplierStore = create<SupplierState>((set, get) => ({
   suppliers: [],
-  loading: false,
+  selectedSupplier: null,
+  isLoading: false,
   error: null,
 
   fetchSuppliers: async () => {
-    set({ loading: true, error: null })
     try {
-      const data = await supplierService.getAll()
-      set({ suppliers: data })
-    } catch (error: unknown) {
-  set({
-    loading: false,
-    error: error instanceof Error ? error.message : "An unexpected error occurred.",
-  });
-} finally {
-      set({ loading: false })
+      set({ isLoading: true, error: null });
+      const data = await supplierService.getAll();
+      set({ suppliers: data?.suppliers || [], isLoading: false });
+    } catch (error: any) {
+      set({ isLoading: false, error: error?.message || "Failed to fetch suppliers" });
     }
   },
 
-  addSupplier: async (data) => {
-    set({ loading: true, error: null })
+  addSupplier: async (payload) => {
     try {
-      await supplierService.create(data)
-      await get().fetchSuppliers()
-    } catch (error: unknown) {
-  set({
-    loading: false,
-    error: error instanceof Error ? error.message : "An unexpected error occurred.",
-  });
-} finally {
-      set({ loading: false })
+      set({ isLoading: true, error: null });
+      const newSupplier = await supplierService.create(payload);
+      console.log("Response:", newSupplier);
+
+      await get().fetchSuppliers();
+      set((state) => ({
+        suppliers: [...state.suppliers, newSupplier],
+      }));    } catch (error: any) {
+      set({ isLoading: false, error: error?.message || "Failed to add supplier" });
+      throw error;
     }
   },
 
-  deleteSupplier: async (supplier_id) => {
-    set({ loading: true, error: null })
+  updateSupplier: async (id, payload) => {
     try {
-      await supplierService.delete(supplier_id)
-      set({
-        suppliers: get().suppliers.filter((s) => s.supplier_id !== supplier_id),
-      })
-    } catch (error: unknown) {
-  set({
-    loading: false,
-    error: error instanceof Error ? error.message : "An unexpected error occurred.",
-  });
-} finally {
-      set({ loading: false })
+      set({ isLoading: true, error: null });
+      await supplierService.update(id, payload);
+      await get().fetchSuppliers();
+      set({ isLoading: false });
+    } catch (error: any) {
+      set({ isLoading: false, error: error?.message || "Failed to update supplier" });
+      throw error;
     }
   },
-}))
+
+  deleteSupplier: async (id) => {
+    try {
+      set({ isLoading: true, error: null });
+      await supplierService.remove(id);
+      await get().fetchSuppliers();
+      set({ isLoading: false });
+    } catch (error: any) {
+      set({ isLoading: false, error: error?.message || "Failed to delete supplier" });
+      throw error;
+    }
+  },
+
+  setSelectedSupplier: (supplier) => set({ selectedSupplier: supplier }),
+}));

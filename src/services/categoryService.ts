@@ -5,7 +5,7 @@ import { Category, CreateCategoryPayload } from "@/types/category";
 export const categoryService = {
   async getAll(): Promise<Category[]> {
     const response = await api.get("/categories");
-    return response.data;
+    return response.data.data;
   },
 
   async createBulk(payload: CreateCategoryPayload): Promise<string> {

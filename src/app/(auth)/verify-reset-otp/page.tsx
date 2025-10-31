@@ -9,8 +9,10 @@ import { Loader2 } from "lucide-react";
 export default function VerifyOtpPage() {
   const router = useRouter();
   const [otp, setOtp] = useState("");
-  const { verifyOtp, isLoading, errorMessage, successMessage } = useAuthStore();
-
+  const { verifyOtp, isLoading } = useAuthStore();
+  const successMessage = useAuthStore((state) => state.successMessage);
+  const errorMessage = useAuthStore((state) => state.errorMessage);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await verifyOtp({ otp });

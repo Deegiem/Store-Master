@@ -50,23 +50,40 @@ export const authService = {
     }
   },
 
-  login: async (payload: LoginPayload): Promise<LoginResponse> => {
+  login: async (payload: LoginPayload): Promise<LoginResponse | null> => {
     try {
       const res = await api.post<LoginResponse>("/auth/login", payload);
       return res.data;
     } catch (error) {
       handleAxiosError<LoginResponse>(error, "Login failed. Please try again.");
+      return null;
     }
   },
 
-  createPassword: async (payload: CreatePasswordPayload): Promise<CreatePasswordResponse> => {
-    try {
-      const res = await api.post<CreatePasswordResponse>("/auth/create-password", payload);
-      return res.data;
-    } catch (error) {
-      handleAxiosError<CreatePasswordResponse>(error, "Failed to create password. Try again.");
-    }
-  },
+
+  createPassword: async (
+  payload: CreatePasswordPayload,
+  token?: string
+): Promise<CreatePasswordResponse> => {
+  try {
+    const res = await api.post<CreatePasswordResponse>(
+      "/auth/create-password",
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    handleAxiosError<CreatePasswordResponse>(
+      error,
+      "Failed to create password. Try again."
+    );
+  }
+},
+
 
   forgotPassword: async (payload: ForgotPasswordPayload): Promise<ForgotPasswordResponse> => {
     try {

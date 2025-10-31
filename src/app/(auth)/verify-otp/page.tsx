@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -9,20 +9,20 @@ import { Loader2 } from "lucide-react";
 export default function VerifyOtpPage() {
   const router = useRouter();
   const [otp, setOtp] = useState("");
-  const { verifyOtp, isLoading, errorMessage, successMessage } = useAuthStore();
+  const { verifyOtp, isLoading } = useAuthStore();
+  const successMessage = useAuthStore((state) => state.successMessage);
+  const errorMessage = useAuthStore((state) => state.errorMessage);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await verifyOtp({ otp });
-  };
 
-  // Auto-redirect after successful verification
-  useEffect(() => {
-    if (successMessage) {
-      const timer = setTimeout(() => router.push("/login"), 1500);
-      return () => clearTimeout(timer);
+    const res = await verifyOtp({ otp });
+
+    if (res?.access_token) {
+      // ✅ Redirect immediately after successful verification
+      router.push("/create-password");
     }
-  }, [successMessage, router]);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

@@ -1,16 +1,19 @@
-import { api } from "@/lib/api"
-import { Sale } from "@/types/sale"
+import { api } from "@/lib/api";
+import { CreateSalePayload, SaleListResponse, SaleResponse } from "@/types/sale";
 
-export const saleService = {
-  // Sell a product (Admin, Store Manager, Sales Staff)
-  async sell(data: Omit<Sale, "sale_id" | "sold_at" | "remaining_quantity">): Promise<string> {
-    const response = await api.post("/products/sell", data)
-    return response.data
+export const salesService = {
+  createSale: async (payload: CreateSalePayload): Promise<SaleResponse> => {
+    const res = await api.post("/products/sell", payload);
+    return res.data;
   },
 
-  // Get all sales records (Admin / Store Manager)
-  async getAll(): Promise<Sale[]> {
-    const response = await api.get("/sales")
-    return response.data
+  getAllSales: async (): Promise<SaleListResponse> => {
+    const res = await api.get("/sales");
+    return res.data;
   },
-}
+
+  getSalesByProductId: async (product_id: string): Promise<SaleListResponse> => {
+    const res = await api.get(`/sales/product/${product_id}`);
+    return res.data;
+  }
+};

@@ -4,10 +4,14 @@
 import React, { useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+
 
 export default function ResetPasswordPage() {
   const router = useRouter();
-  const { resetPassword, isLoading, successMessage, errorMessage } = useAuthStore();
+  const { resetPassword, isLoading } = useAuthStore();
+  const successMessage = useAuthStore((state) => state.successMessage);
+  const errorMessage = useAuthStore((state) => state.errorMessage);
   const [newPassword, setNewPassword] = useState("");
 
 
@@ -32,7 +36,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center text-black bg-gray-50 p-4">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md space-y-4">
+      <motion.form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md space-y-4">
         <h2 className="text-xl font-semibold text-center">Reset Password</h2>
 
         <input
@@ -55,7 +59,7 @@ export default function ResetPasswordPage() {
 
         {successMessage && <p className="text-green-600 text-center">{successMessage}</p>}
         {errorMessage && <p className="text-red-600 text-center">{errorMessage}</p>}
-      </form>
+      </motion.form>
     </div>
   );
 }

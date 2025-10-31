@@ -1,102 +1,138 @@
 
 "use client";
 
-import { useAuthStore } from "@/store/useAuthStore";
 import { useEffect, useState } from "react";
-import CategoryForm from "@/components/categories/CategoryForm";
-import CategoryList from "@/components/categories/CategoryList";
-import ProductForm from "@/components/products/ProductForm";
-import ProductList from "@/components/products/ProductList";
+import { useDashboardStore } from "@/store/dashboardStore";
+import { useUserStore } from "@/store/useUserStore";
 
-interface Widget {
-  title: string;
-  value: string | number;
-  description?: string;
-}
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { motion } from "framer-motion";
 
-export default function ManagerDashboardPage() {
-  const { user } = useAuthStore();
-  const [widgets, setWidgets] = useState<Widget[]>([]);
+export default function AdminDashboardPage() {
+  const {  loading, error } = useDashboardStore();
+  const { currentUser, fetchCurrentUser } = useUserStore();
+
+  const [today] = useState(
+    new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  );
 
   useEffect(() => {
-    if (!user) return;
+    if (!currentUser) fetchCurrentUser();
+  }, [currentUser, fetchCurrentUser]);
 
-    // Mock role-based data
-    const adminData = [
-      { title: "Total Users", value: 234 },
-      { title: "Reports Generated", value: 58 },
-    ];
+  const userName = currentUser
+    ? `${currentUser.first_name} ${currentUser.last_name}`
+    : "User";
 
-    const managerData = [
-      { title: "Team Members", value: 12 },
-      { title: "Active Projects", value: 4 },
-    ];
+  const chartData = [
+    { name: "Mon", sales: 3 },
+    { name: "Tue", sales: 4 },
+    { name: "Wed", sales: 13 },
+    { name: "Thu", sales: 4 },
+    { name: "Fri", sales: 2 },
+    { name: "Sat", sales: 12 },
+    { name: "Sun", sales: 7 },
+  ];
 
-    const staffData = [
-      { title: "Tasks Assigned", value: 15 },
-      { title: "Tasks Completed", value: 10 },
-    ];
-
-    const defaultData = [
-      { title: "Welcome", value: user.name, description: "Have a great day!" },
-    ];
-
-    if (user.role === "admin") setWidgets(adminData);
-    else if (user.role === "manager") setWidgets(managerData);
-    else if (user.role === "staff") setWidgets(staffData);
-    else setWidgets(defaultData);
-  }, [user]);
+  const activities = [
+    "New purchase order approved by Manager",
+    "Product ‘Industrial Wire’ restocked by 250 units",
+    "Supplier ‘Dangote PLC’ added to system",
+    "Low stock alert on ‘PVC Pipes’ triggered",
+    "Sales report generated for the week",
+  ];
 
   return (
-    <div className="space-y-10 p-6">
-      {/* ---- Dashboard Header ---- */}
-      <header>
-        <h2 className="text-2xl font-semibold">
-          {user ? `Welcome back, ${user.name}!` : "Welcome!"}
-        </h2>
-        <p className="text-gray-600">
-          Here’s what’s happening in your workspace today.
-        </p>
-      </header>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <main className="p-8 mt-9 space-y-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <h2 className="text-3xl font-semibold text-gray-900">
+            Welcome back,{" "}
+            <span className="text-[#000ac0]">{userName.split(" ")[0]}</span> 👋
+          </h2>
+          <p className="text-gray-500 mt-1">{today}</p>
+        </motion.div>
 
-      {/* ---- Overview Widgets ---- */}
-      <section className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {widgets.map((widget, i) => (
-          <div
-            key={i}
-            className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition"
-          >
-            <h3 className="font-medium text-gray-700">{widget.title}</h3>
-            <p className="text-3xl font-bold text-blue-600">{widget.value}</p>
-            {widget.description && (
-              <p className="text-sm text-gray-500 mt-2">{widget.description}</p>
-            )}
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 text-red-700 p-3 rounded-md border border-red-200">
+            {error}
           </div>
-        ))}
-      </section>
+        )}
 
-      {/* ---- Categories Section (Admin or Manager only) ---- */}
-      {(user?.role === "admin" || user?.role === "manager") && (
-        <section className="space-y-6">
-          <h3 className="text-xl font-semibold text-gray-800">
-            Category Management
-          </h3>
-          <CategoryForm />
-          <CategoryList />
-        </section>
-      )}
-      {/* ---- Products Section (Admin or Manager only) ---- */}
-      {(user?.role === "admin" || user?.role === "manager") && (
-        <section className="space-y-6">
-          <h3 className="text-xl font-semibold text-gray-800">
-            Product Management
-          </h3>
-          <ProductForm />
-          <ProductList />
-        </section>
-      )}
-      
+        {/* Summary Cards */}
+       
 
+        {/* Sales Overview Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white p-6 rounded-2xl shadow-md border border-gray-100"
+        >
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Weekly Sales Overview
+          </h3>
+          <div className="w-full h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <XAxis dataKey="name" stroke="#555" />
+                <YAxis stroke="#555" />
+                <Tooltip />
+                <Bar dataKey="sales" fill="#000ac0" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+
+        {/* Recent Activities */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-white p-6 rounded-2xl shadow-md border border-gray-100"
+        >
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Recent Activities
+          </h3>
+          {loading ? (
+            <div className="space-y-2">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="h-4 w-3/4 bg-gray-200 animate-pulse rounded"
+                ></div>
+              ))}
+            </div>
+          ) : (
+            <ul className="space-y-3 text-gray-600">
+              {activities.map((activity, index) => (
+                <li key={index} className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-[#000ac0] rounded-full"></div>
+                  <span>{activity}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </motion.div>
+      </main>
     </div>
   );
 }
