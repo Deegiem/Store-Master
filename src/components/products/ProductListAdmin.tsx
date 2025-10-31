@@ -1,25 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 import { useProductStore } from "@/store/productStore";
-import type { Product } from "@/types/products";
 
 export default function ProductList() {
-  const { products, fetchProducts, updateProduct, loading } = useProductStore();
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [form, setForm] = useState({
-    name: "",
-    price: 0,
-    quantity: 0,
-  });
+  const { products, fetchProducts, deleteProduct, updateProduct, loading } = useProductStore();
+  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [form, setForm] = useState({ name: "", price: 0, quantity: 0 });
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
-  // 🛠 Handle Edit Click
-  const handleEdit = (product: Product) => {
+  const handleEdit = (product: any) => {
     setEditingProduct(product);
     setForm({
       name: product.name,
@@ -28,23 +21,10 @@ export default function ProductList() {
     });
   };
 
-  // ✅ Handle Product Update
   const handleUpdate = async () => {
     if (!editingProduct) return;
-
-    try {
-      await updateProduct(editingProduct.product_id, {
-        name: form.name,
-        price: form.price,
-        quantity: form.quantity,
-      });
-
-      toast.success("✅ Product updated successfully!");
-      setEditingProduct(null);
-      await fetchProducts(); // Refresh list
-    } catch (error: any) {
-      toast.error(error?.message || "❌ Failed to update product.");
-    }
+    await updateProduct(editingProduct.product_id, form);
+    setEditingProduct(null);
   };
 
   if (loading) return <p>Loading products...</p>;
@@ -67,7 +47,7 @@ export default function ProductList() {
               <th className="px-5 py-3 border-b border-blue-100">Qty</th>
               <th className="px-5 py-3 border-b border-blue-100">Price</th>
               <th className="px-5 py-3 border-b border-blue-100">Threshold</th>
-              <th className="px-5 py-3 border-b border-blue-100">Actions</th>
+              <th className="px-5 py-3 border-b border-blue-100 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -90,13 +70,21 @@ export default function ProductList() {
                 <td className="px-5 py-3 border-b border-blue-100 text-gray-700">
                   {p.threshold}
                 </td>
-                <td className="px-5 py-3 border-b border-blue-100">
-                  <button
-                    onClick={() => handleEdit(p)}
-                    className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                  >
-                    Edit
-                  </button>
+                <td className="px-5 py-3 border-b border-blue-100 text-center">
+                  <div className="flex lg:flex-row sm:flex-col items-center justify-center gap-2">
+                    <button
+                      onClick={() => handleEdit(p)}
+                      className="w-full sm:w-auto text-sm text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-md py-1.5 px-5 font-medium shadow-sm transition-all duration-150"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteProduct(p.product_id)}
+                      className="w-full sm:w-auto text-sm text-white bg-red-600 hover:bg-red-700 active:scale-95 rounded-md py-1.5 px-5 font-medium shadow-sm transition-all duration-150"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -124,18 +112,14 @@ export default function ProductList() {
                 type="number"
                 placeholder="Price"
                 value={form.price}
-                onChange={(e) =>
-                  setForm({ ...form, price: Number(e.target.value) })
-                }
+                onChange={(e) => setForm({ ...form, price: +e.target.value })}
                 className="w-full border border-blue-200 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
               <input
                 type="number"
                 placeholder="Quantity"
                 value={form.quantity}
-                onChange={(e) =>
-                  setForm({ ...form, quantity: Number(e.target.value) })
-                }
+                onChange={(e) => setForm({ ...form, quantity: +e.target.value })}
                 className="w-full border border-blue-200 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
