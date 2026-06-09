@@ -162,7 +162,9 @@ export default function Navigation() {
   }
 
   const closeSidebar = () => {
-    if (isMobile) setIsOpen(false)
+    if (isMobile) {
+      setIsOpen(false)
+    }
   }
 
   // Close on outside click (mobile)
@@ -438,7 +440,9 @@ function DynamicSubNavItemComponent({
   return (
     <Link
       href={item.href}
-      onClick={onClose}
+      onClick={() => {
+        onClose()  // This calls closeSidebar
+      }}
       className={clsx(
         "group relative flex items-center gap-3 rounded-sm px-3 py-2 text-sm transition-all",
         isActive
