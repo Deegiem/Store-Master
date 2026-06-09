@@ -9,7 +9,7 @@ import type { PendingApprovalItem } from "@/types/procurement"
 interface PendingApprovalCardProps {
   order: PendingApprovalItem
   onApprove: () => Promise<unknown>
-  onReject: () => Promise<unknown>
+  onReject: (reason: string) => Promise<unknown>  // ← Change to accept reason
   delay: number
   isReadOnly?: boolean
   userRole?: string
@@ -32,9 +32,9 @@ export function PendingApprovalCard({
     setApproving(false)
   }
 
-  const handleReject = async () => {
+  const handleReject = async (reason: string) => {
     setRejecting(true)
-    await onReject()
+    await onReject(reason)  // Pass the reason to the onReject function
     setRejecting(false)
   }
 
@@ -89,7 +89,7 @@ export function PendingApprovalCard({
         {!isReadOnly && (
           <div className="flex gap-3">
             <button
-              onClick={handleReject}
+              onClick={() => handleReject("No reason provided")}
               disabled={approving || rejecting}
               className="inline-flex h-10 items-center gap-2 rounded-sm border border-red-200 bg-red-50 px-4 text-sm font-medium text-red-600 transition hover:bg-red-100 disabled:opacity-50"
             >

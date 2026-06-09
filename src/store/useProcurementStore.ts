@@ -54,10 +54,10 @@ interface ProcurementState {
   /* =========================
       ACTIONS
   ========================= */
-  createPurchaseOrder: (payload: CreatePOPayload) => Promise<CreatePOResponse | null>
-  approvePO: (id: string) => Promise<ActionResponse | null>
-  rejectPO: (id: string) => Promise<ActionResponse | null>
-  receiveGoods: (id: string, payload: ReceivePOPayload) => Promise<any>
+  createPurchaseOrder: (payload: CreatePOPayload) => Promise<CreatePOResponse | null>;
+  approvePO: (id: string) => Promise<ActionResponse | null>;
+  rejectPO: (id: string, reason: string) => Promise<ActionResponse | null>;
+  receiveGoods: (id: string, payload: ReceivePOPayload) => Promise<any>;
 
   /* =========================
       HELPERS
@@ -281,7 +281,7 @@ export const useProcurementStore = create<ProcurementState>((set, get) => ({
   /* =========================
       REJECT PO
   ========================= */
-  rejectPO: async (id) => {
+  rejectPO: async (id, reason) => {
     set((s) => ({
       loading: { ...s.loading, reject: true, action: true },
       error: null,
@@ -289,7 +289,7 @@ export const useProcurementStore = create<ProcurementState>((set, get) => ({
     }))
 
     try {
-      const res = await procurementService.reject(id)
+      const res = await procurementService.reject(id, reason)
 
       // Refresh pending approvals and the list
       await Promise.all([

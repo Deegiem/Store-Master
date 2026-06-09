@@ -15,7 +15,7 @@ const ROLE_HIERARCHY: Record<AppRole, number> = {
 }
 
 export function usePermissions() {
-  const { profile } = useAuthStore()
+  const { profile, isLoading: authLoading } = useAuthStore()  // ← Add isLoading here
   const rawRole = profile?.role
   const role = normalizeRole(rawRole)
   const displayRole = getDisplayRole(role)
@@ -179,6 +179,7 @@ export function usePermissions() {
     roleKey,
     displayRole,
     userBranchId,
+    isLoading: authLoading,  // ← Add isLoading to the return object
     
     // Permission checker
     can,

@@ -400,7 +400,6 @@ export function AdminInventoryView() {
           currentQuantity={selectedProduct.quantity}
           branchId={selectedBranchId}
           onSuccess={handleAdjustSuccess}
-          isAdmin={true}
         />
       )}
     </div>

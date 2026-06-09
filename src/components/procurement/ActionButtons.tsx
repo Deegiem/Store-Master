@@ -28,12 +28,12 @@ export function ActionButtons({ canApprove, canReject, canReceive, poId, items =
     setApproveModalOpen(false)
   }
 
-  const handleReject = async (reason: string) => {
+  // This function will be called from the modal with the reason
+  const handleConfirmReject = async (reason: string) => {
     await rejectPO(poId, reason)
     setRejectModalOpen(false)
   }
 
-  // src/components/procurement/ActionButtons.tsx
   const handleReceive = async (notes: string) => {
     // Get the current PO items to check which products exist
     const selectedPO = useProcurementStore.getState().selectedPO
@@ -116,7 +116,7 @@ export function ActionButtons({ canApprove, canReject, canReceive, poId, items =
       <RejectionReasonModal
         open={rejectModalOpen}
         onClose={() => setRejectModalOpen(false)}
-        onConfirm={handleReject}
+        onConfirm={handleConfirmReject}  // ← Fixed: use handleConfirmReject instead of handleReject
         isLoading={loading.reject}
       />
 

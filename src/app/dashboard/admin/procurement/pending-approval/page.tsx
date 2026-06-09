@@ -34,7 +34,7 @@ export default function PendingApprovalPage() {
   }, [fetchPending, fetchAll, isAdmin, isFinance, isPurchase])
 
   // Get the current user's ID
-  const userId = profile?.id || profile?.userId || profile?._id
+  const userId = profile?.id
   const userName = profile?.name
 
   // Determine which POs to display based on user role
@@ -54,7 +54,7 @@ export default function PendingApprovalPage() {
           po.created_by === userName
         )
       )
-      
+
       // Convert ProcurementListItem to a format compatible with PendingApprovalCard
       return pendingPOs.map(po => ({
         po_id: po.po_id,
@@ -157,7 +157,7 @@ export default function PendingApprovalPage() {
                 key={po.po_id}
                 order={po}
                 onApprove={() => approvePO(po.po_id)}
-                onReject={() => rejectPO(po.po_id)}
+                onReject={(reason) => rejectPO(po.po_id, reason)}
                 delay={index * 0.05}
                 isReadOnly={!canTakeAction}
                 userRole={isPurchase ? "purchase" : isAdmin ? "admin" : "finance"}

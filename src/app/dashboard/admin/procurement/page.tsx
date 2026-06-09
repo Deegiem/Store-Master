@@ -17,12 +17,7 @@ import type { POStatus } from "@/types/procurement"
 
 type ProcurementStatusFilter = POStatus | "all"
 
-interface ProcurementPageProps {
-  externalList?: any[]
-  externalLoading?: boolean
-}
-
-export default function ProcurementPage({ externalList, externalLoading }: ProcurementPageProps = {}) {
+export default function ProcurementPage() {
   const router = useRouter()
   const {
     canViewPendingApprovals,
@@ -42,34 +37,26 @@ export default function ProcurementPage({ externalList, externalLoading }: Procu
   const storeFetchAll = useProcurementStore((state) => state.fetchAll)
   const storeLoading = useProcurementStore((state) => state.loading.list)
 
-  // Use external data if provided, otherwise use store data
-  const list = externalList !== undefined ? externalList : storeList
-  const loading = externalLoading !== undefined ? externalLoading : storeLoading
+  const list = storeList
+  const loading = storeLoading
 
   const [search, setSearch] = useState("")
   const [status, setStatus] = useState<ProcurementStatusFilter>("all")
   const [createOpen, setCreateOpen] = useState(false)
 
   useEffect(() => {
-    // Only fetch if not using external data
-    if (externalList === undefined) {
-      // Fetch based on user role
-      if (isAdmin || isFinance) {
-        // Admin/Finance: view all procurement
-        storeFetchAll()
-      } else if (isPurchase) {
-        // Purchase Manager: view only their own POs
-        storeFetchAll({ created_by: useProcurementStore.getState().filters?.created_by })
-      } else if (isManager) {
-        // Store Manager: view branch procurement
-        storeFetchAll({ branch_id: userBranchId })
-      } else {
-        storeFetchAll()
-      }
+    // Fetch based on user role
+    if (isAdmin || isFinance) {
+      storeFetchAll()
+    } else if (isPurchase) {
+      storeFetchAll({ created_by: useProcurementStore.getState().filters?.created_by })
+    } else if (isManager) {
+      storeFetchAll({ branch_id: userBranchId })
+    } else {
+      storeFetchAll()
     }
-  }, [externalList, storeFetchAll, isAdmin, isFinance, isPurchase, isManager, userBranchId])
+  }, [storeFetchAll, isAdmin, isFinance, isPurchase, isManager, userBranchId])
 
-  // Check if user can view the procurement list
   const canViewProcurement = canViewAllProcurement || canViewOwnProcurement || canViewBranchProcurement || isAdmin || isFinance || isPurchase || isManager
 
   if (!canViewProcurement) {
@@ -113,10 +100,9 @@ export default function ProcurementPage({ externalList, externalLoading }: Procu
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row">
-            {/* Only Admin and Finance see Pending Approvals button */}
             {(canViewPendingApprovals || isAdmin || isFinance) && (
               <button
-                onClick={() => router.push("/dashboard/finance/procurement/pending-approval")}
+                onClick={() => router.push(`/dashboard/${role}/procurement/pending-approval`)}
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-sm border border-amber-200 bg-amber-50 px-5 text-sm font-semibold text-amber-700 transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 <Clock3 className="h-4 w-4" />
@@ -124,7 +110,6 @@ export default function ProcurementPage({ externalList, externalLoading }: Procu
               </button>
             )}
 
-            {/* Only Admin and Purchase Manager see Create PO button */}
             {(canCreateProcurement && (isAdmin || isPurchase)) && (
               <button
                 onClick={() => setCreateOpen(true)}
@@ -137,7 +122,6 @@ export default function ProcurementPage({ externalList, externalLoading }: Procu
           </div>
         </motion.div>
 
-        {/* Stats - Only show if user has appropriate permission */}
         {(isAdmin || isFinance || isPurchase || isManager) && (
           <ProcurementStats
             total={list.length}
@@ -147,7 +131,6 @@ export default function ProcurementPage({ externalList, externalLoading }: Procu
           />
         )}
 
-        {/* Filters */}
         <ProcurementFilters
           search={search}
           setSearch={setSearch}
@@ -155,14 +138,12 @@ export default function ProcurementPage({ externalList, externalLoading }: Procu
           setStatus={setStatus}
         />
 
-        {/* Results Count */}
         {!loading && list.length > 0 && (
           <p className="text-sm text-slate-500">
             Showing {filtered.length} of {list.length} purchase orders
           </p>
         )}
 
-        {/* Content */}
         {loading ? (
           <ProcurementSkeleton />
         ) : filtered.length === 0 ? (
@@ -172,7 +153,6 @@ export default function ProcurementPage({ externalList, externalLoading }: Procu
         )}
       </div>
 
-      {/* Only render Create PO Modal if user has permission */}
       {(canCreateProcurement && (isAdmin || isPurchase)) && (
         <CreatePOModal open={createOpen} onClose={() => setCreateOpen(false)} />
       )}

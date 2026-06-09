@@ -314,7 +314,6 @@ export function ManagerInventoryView() {
           currentQuantity={selectedProduct.quantity}
           branchId={branchId}
           onSuccess={handleAdjustSuccess}
-          isAdmin={false}
         />
       )}
     </div>

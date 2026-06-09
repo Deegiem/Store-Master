@@ -2,18 +2,19 @@
 
 import { useParams } from "next/navigation"
 import { RoleGuard } from "@/components/RoleGuard"
-import UserAuditListPage from "@/app/dashboard/admin/user-audit/page"
+import UserAuditDetailPage from "@/app/dashboard/admin/user-audit/[userId]/page"
 import type { AppRole } from "@/lib/roleMapper"
 
-export default function DynamicUserAuditDetailPage() {
-  const params = useParams()
-  const currentRole = params.role as string
-  
+interface PageProps {
+  params: Promise<{ userId: string }>
+}
+
+export default function DynamicUserAuditDetailPage({ params }: PageProps) {
   const allowedRoles: AppRole[] = ["admin"]
 
   return (
     <RoleGuard allowedRoles={allowedRoles}>
-      <UserAuditListPage />
+      <UserAuditDetailPage params={params} />
     </RoleGuard>
   )
 }

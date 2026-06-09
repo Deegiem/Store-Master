@@ -43,7 +43,7 @@ interface SalesStore {
     createSale: string | null
     cancelSale: string | null
   }
-  fetchProductsForSale: (params?: SaleProductQueryParams) => Promise<void>
+  fetchProductsForSale: (params?: SaleProductQueryParams, branch_id?: string) => Promise<void>
   searchProductByBarcode: (barcode: string, branch_id?: string) => Promise<void>
   requestSaleQuote: (payload: { items: { product_id: string; quantity: number }[]; discount: number }, branch_id?: string) => Promise<void>
   createSale: (payload: CreateSalePayload, branch_id?: string) => Promise<void>

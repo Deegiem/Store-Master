@@ -1,18 +1,18 @@
+// src/components/sales/SalesListTable.tsx
 "use client"
 
-import { useRouter, useParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { ChevronRight } from "lucide-react"
 import type { SaleListRecord } from "@/types/sale"
 import { SaleStatusBadge } from "./SaleStatusBadge"
 
 interface SalesListTableProps {
   sales: SaleListRecord[]
+  currentRole: string  // Add this prop
 }
 
-export function SalesListTable({ sales }: SalesListTableProps) {
+export function SalesListTable({ sales, currentRole }: SalesListTableProps) {
   const router = useRouter()
-  const params = useParams()
-  const currentRole = params.role as string
 
   if (sales.length === 0) {
     return null

@@ -43,8 +43,8 @@ export const procurementService = {
     return res.data
   },
 
-  reject: async (poId: string): Promise<ActionResponse> => {
-    const res = await api.put(`/procurement/${poId}/reject`)
+  reject: async (poId: string, reason: string): Promise<ActionResponse> => {
+    const res = await api.put(`/procurement/${poId}/reject`, { reason })
     return res.data
   },
 

@@ -57,7 +57,7 @@ export default function PendingApprovalPage() {
                 key={po.po_id}
                 order={po}
                 onApprove={() => approvePO(po.po_id)}
-                onReject={() => rejectPO(po.po_id)}
+                onReject={(reason) => rejectPO(po.po_id, reason)}
                 delay={index * 0.05}
               />
             ))}

@@ -19,11 +19,11 @@ export default function ProcurementDetailPage() {
   const router = useRouter()
   const { selectedPO, fetchById, loading } = useProcurementStore()
   const { profile } = useAuthStore()
-  const { 
-    isAdmin, 
-    isFinance, 
-    isPurchase, 
-    isManager, 
+  const {
+    isAdmin,
+    isFinance,
+    isPurchase,
+    isManager,
     isStore,
     userBranchId,
     role
@@ -39,35 +39,23 @@ export default function ProcurementDetailPage() {
   // Check if user has permission to view this PO
   const canViewPO = () => {
     if (!selectedPO) return false
-    
+
     // Admin and Finance can view all
     if (isAdmin || isFinance) return true
-    
+
     // Purchase Manager can only view POs they created
     if (isPurchase) {
-      const userId = profile?.id || profile?.userId || profile?._id
-      
-      // Try multiple possible field names for the creator ID
-      const createdById = selectedPO.created_by_id || 
-                          selectedPO.createdBy_id || 
-                          selectedPO.created_by?.id ||
-                          selectedPO.user_id ||
-                          selectedPO.creator_id
-      
-      // Also check if the created_by name matches the current user's name
-      const userNameMatch = selectedPO.created_by === profile?.name || 
-                            selectedPO.created_by === `${profile?.name} (Purchase Manager)` ||
-                            selectedPO.created_by_name === profile?.name
-      
-      return createdById === userId || userNameMatch
+      const userId = profile?.id
+      // created_by is a string (user ID) in ProcurementDetail type
+      return selectedPO.created_by === userId
     }
-    
+
     // Store Manager can only view POs targeting their branch
     if (isManager || isStore) {
-      const branchId = selectedPO.target_branch?.id || selectedPO.target_branch_id
+      const branchId = selectedPO.target_branch?.id
       return branchId === userBranchId
     }
-    
+
     return false
   }
 
@@ -105,9 +93,9 @@ export default function ProcurementDetailPage() {
   }
 
   const infoCards = [
-    { label: "Branch", value: selectedPO.target_branch?.name || selectedPO.target_branch_name || "N/A", icon: Building2 },
-    { label: "Created By", value: selectedPO.created_by_name || selectedPO.created_by || "N/A", icon: User },
-    { label: "Approved By", value: selectedPO.approved_by_name || selectedPO.approved_by || "Not approved", icon: CheckCircle },
+    { label: "Branch", value: selectedPO.target_branch?.name || "N/A", icon: Building2 },
+    { label: "Created By", value: selectedPO.created_by || "N/A", icon: User },
+    { label: "Approved By", value: selectedPO.approved_by || "Not approved", icon: CheckCircle },
     { label: "Created At", value: new Date(selectedPO.created_at).toLocaleDateString(), icon: Calendar },
     { label: "Total Amount", value: `₦${selectedPO.total_amount?.toLocaleString() || 0}`, icon: DollarSign },
   ]
@@ -138,7 +126,7 @@ export default function ProcurementDetailPage() {
               Purchase Order
             </h1>
             <p className="mt-1 text-sm text-slate-500">
-              {selectedPO.supplier?.name || selectedPO.supplier_name || "Unknown Supplier"}
+              {selectedPO.supplier?.name || "Unknown Supplier"}
             </p>
           </div>
           <div className="ml-auto">

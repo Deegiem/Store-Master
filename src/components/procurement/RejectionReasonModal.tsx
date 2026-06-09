@@ -8,7 +8,7 @@ import { AlertTriangle, Loader2, X } from "lucide-react"
 interface RejectionReasonModalProps {
   open: boolean
   onClose: () => void
-  onConfirm: (reason: string) => void
+  onConfirm: (reason: string) => void  // This already expects a reason
   isLoading?: boolean
 }
 
@@ -39,7 +39,7 @@ export function RejectionReasonModal({
       alert("Please provide a reason for rejection")
       return
     }
-    onConfirm(reason)
+    onConfirm(reason)  // This passes the reason - correct
   }
 
   if (!open) return null

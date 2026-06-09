@@ -31,14 +31,14 @@ export default function StoreInventoryPage() {
     fetchAdjustmentHistory,
     adjustStock,
   } = useInventoryStore()
-  
+
   const [selectedProduct, setSelectedProduct] = useState<InventoryItem | null>(null)
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards")
   const [activeTab, setActiveTab] = useState<"inventory" | "low-stock" | "history">("inventory")
-  
-  const branchId = profile?.branch_id || ""
+
+  const branchId = profile?.branchId || ""
   const canAdjustStock = canManageInventory || isAdmin || isManager
-  
+
   useEffect(() => {
     if (branchId) {
       fetchBranchInventory(branchId)
@@ -46,29 +46,13 @@ export default function StoreInventoryPage() {
       fetchAdjustmentHistory(branchId)
     }
   }, [branchId])
-  
-  const handleAdjustStock = async (quantity: number, reason: AdjustmentReason, note: string) => {
-    if (!selectedProduct) return
-    
-    await adjustStock({
-      product_id: selectedProduct.product_id,
-      quantity,
-      reason,
-      note,
-    })
-    
-    await fetchBranchInventory(branchId)
-    await fetchLowStockItems(branchId)
-    await fetchAdjustmentHistory(branchId)
-    setSelectedProduct(null)
-  }
-  
+
   const handleRefresh = () => {
     fetchBranchInventory(branchId)
     fetchLowStockItems(branchId)
     fetchAdjustmentHistory(branchId)
   }
-  
+
   return (
     <div className="min-h-screen bg-[#F9FAFB] p-6">
       <div className="mx-auto max-w-7xl space-y-6">
@@ -117,7 +101,7 @@ export default function StoreInventoryPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
             <div className="flex items-center justify-between">
               <div>
@@ -131,7 +115,7 @@ export default function StoreInventoryPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
             <div className="flex items-center justify-between">
               <div>
@@ -146,7 +130,7 @@ export default function StoreInventoryPage() {
             </div>
           </div>
         </div>
-        
+
         {/* Tab Navigation */}
         <div className="border-b border-slate-200">
           <nav className="flex gap-6">
@@ -178,7 +162,7 @@ export default function StoreInventoryPage() {
             ))}
           </nav>
         </div>
-        
+
         {/* View Toggle (for inventory tab) */}
         {activeTab === "inventory" && !loading && inventory.length > 0 && (
           <div className="flex justify-end gap-2">
@@ -206,7 +190,7 @@ export default function StoreInventoryPage() {
             </button>
           </div>
         )}
-        
+
         {/* Content */}
         {activeTab === "inventory" && (
           <>
@@ -238,14 +222,25 @@ export default function StoreInventoryPage() {
               </div>
             ) : (
               <InventoryTable
-                data={inventory}
-                onAdjustStock={setSelectedProduct}
-                canAdjustStock={canAdjustStock}
+                items={inventory}
+                onAdjustStock={canAdjustStock ? (productId, productName, currentQuantity) => {
+                  setSelectedProduct({
+                    _id: productId,
+                    product_id: productId,
+                    product_name: productName,
+                    quantity: currentQuantity,
+                    branch_id: branchId,
+                    reorder_point: 0,
+                    bin_location: null,
+                    selling_price: 0,
+                    updated_at: new Date().toISOString()
+                  } as InventoryItem)
+                } : undefined}
               />
             )}
           </>
         )}
-        
+
         {/* Low Stock Tab Content */}
         {activeTab === "low-stock" && (
           <div className="rounded-sm border border-slate-200 bg-white">
@@ -294,7 +289,8 @@ export default function StoreInventoryPage() {
             )}
           </div>
         )}
-        
+
+        {/* History Tab Content */}
         {/* History Tab Content */}
         {activeTab === "history" && (
           <div className="overflow-hidden rounded-sm border border-slate-200 bg-white">
@@ -306,7 +302,7 @@ export default function StoreInventoryPage() {
                       Date
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                      Product
+                      Product ID
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                       Quantity
@@ -324,7 +320,7 @@ export default function StoreInventoryPage() {
                     <tr>
                       <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
                         No adjustment history found
-                       </td>
+                      </td>
                     </tr>
                   ) : (
                     adjustmentHistory.map((log) => (
@@ -332,8 +328,8 @@ export default function StoreInventoryPage() {
                         <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
                           {new Date(log.date).toLocaleString()}
                         </td>
-                        <td className="px-6 py-4 text-sm font-medium text-slate-900">
-                          {log.product_name || log.product_id.slice(0, 8)}
+                        <td className="px-6 py-4 text-sm font-mono text-slate-600">
+                          {log.product_id.slice(0, 8)}...
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold text-red-600">
                           -{log.quantity_removed}
@@ -342,10 +338,9 @@ export default function StoreInventoryPage() {
                           <span className={cn(
                             "rounded-sm px-2 py-1 text-xs font-medium",
                             log.reason === "damaged" && "bg-red-100 text-red-800",
-                            log.reason === "theft" && "bg-red-100 text-red-800",
                             log.reason === "expired" && "bg-yellow-100 text-yellow-800",
-                            log.reason === "lost" && "bg-orange-100 text-orange-800",
-                            log.reason === "other" && "bg-gray-100 text-gray-800"
+                            log.reason === "theft" && "bg-red-100 text-red-800",
+                            log.reason === "internal_consumption" && "bg-blue-100 text-blue-800"
                           )}>
                             {log.reason}
                           </span>
@@ -361,17 +356,22 @@ export default function StoreInventoryPage() {
             </div>
           </div>
         )}
-        
+
         {/* Adjust Stock Modal */}
         {selectedProduct && (
           <AdjustStockModal
-            isOpen={!!selectedProduct}
+            open={!!selectedProduct}
             onClose={() => setSelectedProduct(null)}
             productId={selectedProduct.product_id}
             productName={selectedProduct.product_name}
             currentQuantity={selectedProduct.quantity}
-            onSubmit={handleAdjustStock}
-          />
+            branchId={branchId}
+            onSuccess={() => {
+              fetchBranchInventory(branchId)
+              fetchLowStockItems(branchId)
+              fetchAdjustmentHistory(branchId)
+              setSelectedProduct(null)
+            }} />
         )}
       </div>
     </div>

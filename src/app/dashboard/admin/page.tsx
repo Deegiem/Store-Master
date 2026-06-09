@@ -53,8 +53,8 @@ export default function DashboardPage() {
       title: "Revenue (This Month)",
       value: `₦${dashboard.revenue.this_month.toLocaleString()}`,
       icon: DollarSign,
-      trend: dashboard.revenue.last_month ? `+${(((dashboard.revenue.this_month - dashboard.revenue.last_month) / dashboard.revenue.last_month) * 100).toFixed(1)}%` : "+0%",
-      trendUp: dashboard.revenue.this_month >= (dashboard.revenue.last_month ?? 0),
+      // trend: dashboard.revenue.last_month ? `+${(((dashboard.revenue.this_month - dashboard.revenue.last_month) / dashboard.revenue.last_month) * 100).toFixed(1)}%` : "+0%",
+      // trendUp: dashboard.revenue.this_month >= (dashboard.revenue.last_month ?? 0),
       color: "from-green-500 to-green-600",
       bgColor: "bg-green-50",
       iconColor: "text-green-600",
@@ -138,8 +138,8 @@ export default function DashboardPage() {
               title={stat.title}
               value={stat.value}
               icon={stat.icon}
-              trend={stat.trend}
-              trendUp={stat.trendUp}
+              // trend={stat.trend}
+              // trendUp={stat.trendUp}
               bgColor={stat.bgColor}
               iconColor={stat.iconColor}
               delay={index * 0.05}

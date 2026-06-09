@@ -7,6 +7,7 @@ import type {
   SalesByPaymentReport,
   SalesSummaryReport,
   SlowMovingInventoryReport,
+  ProfitReportQueryParams,
   TaxReport,
 } from "@/types/report"
 

@@ -1,5 +1,6 @@
 "use client"
 
+import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Calendar, TrendingUp, Package, DollarSign, BarChart3, Building2 } from "lucide-react"
 import { RoleGuard } from "@/components/RoleGuard"
@@ -12,6 +13,8 @@ import { EmptySalesState } from "@/components/sales/EmptySalesState"
 import type { AppRole } from "@/lib/roleMapper"
 
 export default function DailySalesPage() {
+  const params = useParams()
+  const currentRole = params.role as string  // ← Add this line
   const { userBranchId, canViewAllBranches, isSales, isManager } = usePermissions()
   const { branches, fetchBranches } = useBranchStore()
   const { sales, todaysSales, fetchSales, fetchTodaysSales, loading } = useSalesStore()
@@ -34,7 +37,7 @@ export default function DailySalesPage() {
 
   useEffect(() => {
     let branchFilter: string | undefined
-    
+
     if (canViewAllBranches) {
       // Admin: send branch_id if selected
       branchFilter = selectedBranchId || undefined
@@ -42,13 +45,13 @@ export default function DailySalesPage() {
       // Sales staff and manager: DON'T send branch_id - API uses their account's branch automatically
       branchFilter = undefined
     }
-    
+
     // Fetch sales for selected date
-    fetchSales({ 
-      start_date: selectedDate, 
-      end_date: selectedDate 
+    fetchSales({
+      start_date: selectedDate,
+      end_date: selectedDate
     }, branchFilter)
-    
+
     // Fetch today's summary - for sales staff, don't send branch_id
     // For admin, only fetch if branch is selected
     if (canViewAllBranches) {
@@ -129,8 +132,8 @@ export default function DailySalesPage() {
                       Total Sales
                     </p>
                     <h2 className="mt-2 text-2xl font-bold text-slate-900">
-                      {selectedDate === new Date().toISOString().split('T')[0] 
-                        ? todaysSales.total_sales 
+                      {selectedDate === new Date().toISOString().split('T')[0]
+                        ? todaysSales.total_sales
                         : sales.length}
                     </h2>
                     <p className="text-xs text-slate-400">{formatDate(selectedDate)}</p>
@@ -215,7 +218,7 @@ export default function DailySalesPage() {
           {loading.sales ? (
             <SalesTableSkeleton />
           ) : sales.length > 0 ? (
-            <SalesListTable sales={sales} />
+            <SalesListTable sales={sales} currentRole={currentRole} />  // ← Add currentRole prop
           ) : (
             <EmptySalesState message={`No sales found for ${formatDate(selectedDate)}`} />
           )}

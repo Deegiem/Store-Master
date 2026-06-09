@@ -93,5 +93,8 @@ export type Permission = keyof typeof PERMISSIONS
 export function hasPermission(role: AppRole, permission: Permission): boolean {
   // Backward compatibility: treat "store" role as "manager"
   const effectiveRole = role === "store" ? "manager" : role
-  return PERMISSIONS[permission]?.includes(effectiveRole) ?? false
+  const allowedRoles = PERMISSIONS[permission]
+  
+  // Type assertion to fix the TypeScript error
+  return (allowedRoles as readonly AppRole[])?.includes(effectiveRole as AppRole) ?? false
 }

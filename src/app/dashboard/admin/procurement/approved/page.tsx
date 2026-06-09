@@ -54,7 +54,7 @@ export default function ApprovedOrdersPage() {
   
   if (isManager) {
     // Manager should only see their branch's POs
-    approvedOrders = approvedOrders.filter(order => order.target_branch_id === userBranchId)
+    approvedOrders = approvedOrders.filter(order => order.target_branch === userBranchId)
   }
 
   // Check if user can view this page

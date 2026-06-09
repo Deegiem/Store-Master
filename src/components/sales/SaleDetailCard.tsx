@@ -1,6 +1,6 @@
 "use client"
 
-import { Building2, User, CreditCard, Hash, Calendar, FileText, DollarSign, Receipt } from "lucide-react"
+import { Building2, User, CreditCard, Hash, Calendar, FileText, Receipt } from "lucide-react"
 import type { SaleDetail } from "@/types/sale"
 import { SaleStatusBadge } from "./SaleStatusBadge"
 import { CancelSaleButton } from "./CancelSaleButton"
@@ -126,7 +126,7 @@ export function SaleDetailCard({ sale, onCancel }: SaleDetailCardProps) {
               )}
               <tr>
                 <td colSpan={4} className="px-5 py-4 text-right font-semibold text-slate-900">
-                  Tax ({sale.tax_rate})
+                  Tax ({sale.tax})
                 </td>
                 <td className="px-5 py-4 text-right font-semibold text-slate-900">
                   ₦{sale.tax.toLocaleString()}
