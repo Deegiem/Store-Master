@@ -18,6 +18,7 @@ import { BranchPerformance } from "@/components/admin-dash-components/BranchPerf
 import { AdminAuditTable } from "@/components/admin-dash-components/AdminAuditTable"
 import { useUserStore } from "@/store/useUserStore";
 import { useEffect } from "react";
+import { SharePreviewButton } from "@/components/SharePreviewButton";
 
 export default function DashboardPage() {
   const {
@@ -152,6 +153,9 @@ export default function DashboardPage() {
 
         {/* AUDIT LOGS */}
         <AdminAuditTable logs={auditLogs ?? []} />
+
+        <SharePreviewButton />
+
       </div>
     </div>
   )
