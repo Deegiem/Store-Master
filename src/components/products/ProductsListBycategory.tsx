@@ -311,7 +311,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useProductStore } from "@/store/productStore";
-import { useCategoryStore } from "@/store/categoryStore";
+import { useCategoryStore } from "@/store/useCategoryStore";
 import { XCircle } from "lucide-react";
 
 export default function ProductsListByCategory() {
@@ -412,9 +412,6 @@ const filteredProducts = useMemo(() => {
 // }, [productsByCategory]);
 
 
-
-
-
   // 🧹 Reset filters
   const handleReset = () => {
     setCategoryId("");
@@ -471,10 +468,10 @@ const filteredProducts = useMemo(() => {
           Fetching products...
         </p>
       )}
-      {error && (
-        <p className="text-red-500 text-center font-medium">Error: {error}</p>
+      {error.products && (
+        <p className="text-red-500 text-center font-medium">Error: {error.products}</p>
       )}
-      {!loading && !error && filteredProducts.length === 0 && (
+      {!loading && !error.products && filteredProducts.length === 0 && (
         <p className="text-gray-500 text-center italic">
           No products found matching your search.
         </p>
@@ -484,12 +481,12 @@ const filteredProducts = useMemo(() => {
       <ul className="divide-y divide-blue-100">
         {filteredProducts.map((p) => (
           <li
-            key={p.product_id}
+            key={p.product_id ?? p.id}
             className="flex justify-between items-center py-3 px-2 hover:bg-blue-50 rounded transition-colors duration-150"
           >
             <span className="font-medium text-gray-800">{p.name}</span>
             <span className="text-blue-600 font-semibold">
-              ₦{p.price.toLocaleString()}
+              ₦{(p.price ?? 0).toLocaleString()}
             </span>
           </li>
         ))}

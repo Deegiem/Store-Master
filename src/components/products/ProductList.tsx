@@ -41,7 +41,7 @@ export default function ProductList() {
           <tbody>
             {products.map((p, idx) => (
               <tr
-                key={p.product_id}
+                key={p.product_id ?? p.id}
                 className={`transition-all duration-200 ${
                   idx % 2 === 0 ? "bg-white" : "bg-blue-50/30"
                 } hover:bg-blue-100/50`}
@@ -53,7 +53,7 @@ export default function ProductList() {
                   {p.quantity}
                 </td>
                 <td className="px-5 py-3 border-b border-blue-100 text-gray-800 font-semibold">
-                  ₦{p.price.toLocaleString()}
+                  ₦{(p.price ?? 0).toLocaleString()}
                 </td>
                 <td className="px-5 py-3 border-b border-blue-100 text-gray-700">
                   {p.threshold}

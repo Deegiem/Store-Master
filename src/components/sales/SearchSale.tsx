@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSalesStore } from "@/store/saleStore";
-import { api } from "@/lib/api";
+import { salesService } from "@/services/saleService";
 
 interface Product {
   product_id: string;
@@ -30,8 +30,13 @@ export default function SearchSale() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await api.get("/products");
-      setProducts(res.data);
+      try {
+        const res = await salesService.getProductsForSale({ limit: 200 });
+        setProducts(res.data ?? []);
+      } catch (err) {
+        void err;
+        setProducts([]);
+      }
     };
     fetchProducts();
   }, []);
@@ -80,36 +85,42 @@ export default function SearchSale() {
       )}
 
       {/* Loading */}
-      {loading && (
+      {loading.sales && (
         <p className="text-gray-500 text-center">Loading sales...</p>
       )}
 
       {/* Sales results */}
-      {searching && !loading && (
+      {searching && !loading.sales && (
         <div className="space-y-4 mt-4">
           {sales.length > 0 ? (
-            sales.map((s) => (
+            sales.map((sale) => (
               <div
-                key={s.sale_id}
+                key={sale.sale_id}
                 className="border p-4 rounded-xl shadow-sm hover:shadow-md transition bg-gray-50"
               >
                 <h3 className="font-semibold text-[#1b42da]">
-                  {s.product_name}
+                  Sale: {sale.sale_number}
                 </h3>
                 <p className="text-gray-700">
-                  <strong>Quantity Sold:</strong> {s.quantity_sold}
+                  <strong>Branch:</strong> {sale.branch_name}
                 </p>
-                {s.total_sale_price && (
-                  <p className="text-gray-700">
-                    <strong>Total:</strong> ₦{s.total_sale_price}
-                  </p>
-                )}
-                <p className="text-gray-500 text-sm">
-                  <strong>Sold By:</strong> {s.sold_by}
+                <p className="text-gray-700">
+                  <strong>Cashier:</strong> {sale.cashier_name}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Items:</strong> {sale.items_count}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Total Amount:</strong> ₦{sale.total_amount.toLocaleString()}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Payment Method:</strong> {sale.payment_method}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Status:</strong> {sale.status}
                 </p>
                 <p className="text-gray-400 text-xs">
-                  <strong>Sold At:</strong>{" "}
-                  {new Date(s.sold_at).toLocaleString()}
+                  <strong>Date:</strong> {new Date(sale.created_at).toLocaleString()}
                 </p>
               </div>
             ))

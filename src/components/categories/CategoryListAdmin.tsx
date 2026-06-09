@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useCategoryStore } from "@/store/categoryStore";
+import { useCategoryStore } from "@/store/useCategoryStore";
 
 export default function CategoryList() {
   const { categories, fetchCategories, deleteCategory, loading } = useCategoryStore();
@@ -26,7 +26,7 @@ export default function CategoryList() {
           >
             <span className="text-gray-800 font-medium">{cat.name}</span>
             <button
-              onClick={() => deleteCategory(cat.category_id)}
+              onClick={() => deleteCategory(cat.category_id ?? cat.id)}
               className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
             >
               Delete

@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCurrentUser } from "@/services/userService";
-import { User } from "@/types/user";
+import { userService } from "@/services/userService";
+import type { UserProfile } from "@/types/user";
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function ProfilePage() {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const data = await getCurrentUser();
+        const data = await userService.getCurrentUser();
         setUser(data);
       } catch (err) {
         console.error(err);
@@ -49,9 +49,9 @@ export default function ProfilePage() {
           <p><span className="font-medium">Country:</span> {user.country ?? "N/A"}</p>
           <hr className="my-4" />
           <p className="text-sm text-gray-500">
-            Joined on {new Date(user.created_at).toLocaleDateString()}  
+            Joined on {user.created_at ? new Date(user.created_at).toLocaleDateString() : "N/A"}
             <br />
-            Last updated {new Date(user.updated_at).toLocaleString()}
+            Last updated {user.updated_at ? new Date(user.updated_at).toLocaleString() : "N/A"}
           </p>
         </div>
       </div>

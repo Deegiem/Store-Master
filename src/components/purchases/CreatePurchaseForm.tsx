@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import { usePurchaseStore } from "@/store/purchaseStore";
 import { useProductStore } from "@/store/productStore";
-import { SupplierStore } from "@/store/supplierStore";
+import { useSupplierStore } from "@/store/supplierStore";
 import { toast } from "react-hot-toast";
 
 export default function CreatePurchaseForm() {
   const { createPurchase } = usePurchaseStore();
   const { products, fetchProducts } = useProductStore();
-  const { suppliers, fetchSuppliers } = SupplierStore();
+  const { suppliers, fetchSuppliers } = useSupplierStore();
 
   const [productId, setProductId] = useState<string>("");
   const [supplierId, setSupplierId] = useState<string>("");

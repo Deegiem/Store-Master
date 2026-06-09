@@ -1,16 +1,19 @@
-// services/authService.ts
+// src/services/authService.ts
 import { api } from "@/lib/api";
 import type {
-  RegisterPayload,
-  RegisterResponse,
-  OtpPayload,
-  VerifyOtpResponse,
   LoginPayload,
   LoginResponse,
+  RefreshTokenPayload,
+  RefreshTokenResponse,
+  LogoutPayload,
+  LogoutResponse,
+  LogoutAllResponse,
   CreatePasswordPayload,
   CreatePasswordResponse,
   ResetPasswordPayload,
   ResetPasswordResponse,
+  ChangePasswordPayload,
+  ChangePasswordResponse,
   ForgotPasswordPayload,
   ForgotPasswordResponse,
 } from "@/types/auth";
@@ -24,66 +27,83 @@ function isAxiosError<T>(error: unknown): error is AxiosError<T> {
 // ✅ Standardized error normalizer
 function handleAxiosError<T>(error: unknown, fallbackMessage: string): never {
   if (isAxiosError<T>(error)) {
-    const data = error.response?.data as { message?: string }
-    throw new Error(data?.message || fallbackMessage)
+    const data = error.response?.data as { message?: string; detail?: string }
+    throw new Error(data?.message || data?.detail || fallbackMessage)
   }
   throw new Error("Unexpected error. Please check your network connection.")
 }
 
 // ✅ Unified Auth Service
 export const authService = {
-  register: async (payload: RegisterPayload): Promise<RegisterResponse | string> => {
-    try {
-      const res = await api.post<RegisterResponse | string>("/auth/register", payload);
-      return res.data;
-    } catch (error) {
-      handleAxiosError<RegisterResponse>(error, "Registration failed. Please try again.");
-    }
-  },
+  login: async (payload: LoginPayload): Promise<LoginResponse> => {
+    const body = new URLSearchParams({
+      grant_type: "password",
+      username: payload.email,
+      password: payload.password,
+    });
 
-  verifyOtp: async (payload: OtpPayload): Promise<VerifyOtpResponse> => {
-    try {
-      const res = await api.post<VerifyOtpResponse>("/auth/verify-otp", payload);
-      return res.data;
-    } catch (error) {
-      handleAxiosError<VerifyOtpResponse>(error, "OTP verification failed. Try again.");
-    }
-  },
-
-  login: async (payload: LoginPayload): Promise<LoginResponse | null> => {
-    try {
-      const res = await api.post<LoginResponse>("/auth/login", payload);
-      return res.data;
-    } catch (error) {
-      handleAxiosError<LoginResponse>(error, "Login failed. Please try again.");
-      return null;
-    }
-  },
-
-
-  createPassword: async (
-  payload: CreatePasswordPayload,
-  token?: string
-): Promise<CreatePasswordResponse> => {
-  try {
-    const res = await api.post<CreatePasswordResponse>(
-      "/auth/create-password",
-      payload,
+    const res = await api.post<LoginResponse>(
+      "/auth/login",
+      body,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/x-www-form-urlencoded",
         },
       }
     );
-    return res.data;
-  } catch (error) {
-    handleAxiosError<CreatePasswordResponse>(
-      error,
-      "Failed to create password. Try again."
-    );
-  }
-},
 
+    return res.data;
+  },
+
+  refreshToken: async (payload: RefreshTokenPayload): Promise<RefreshTokenResponse> => {
+    try {
+      const res = await api.post<RefreshTokenResponse>("/auth/refresh", payload);
+      return res.data;
+    } catch (error) {
+      handleAxiosError<RefreshTokenResponse>(error, "Failed to refresh token. Please log in again.");
+    }
+  },
+
+  logout: async (payload: LogoutPayload): Promise<LogoutResponse> => {
+    console.trace('🔴 Logout called from:');
+
+    try {
+      const res = await api.post<LogoutResponse>("/auth/logout", payload);
+      return res.data;
+    } catch (error) {
+      handleAxiosError<LogoutResponse>(error, "Logout failed.");
+    }
+  },
+
+  logoutAll: async (): Promise<LogoutAllResponse> => {
+    try {
+      const res = await api.post<LogoutAllResponse>("/auth/logout-all");
+      return res.data;
+    } catch (error) {
+      handleAxiosError<LogoutAllResponse>(error, "Failed to logout from all sessions.");
+    }
+  },
+
+  createPassword: async (
+    payload: CreatePasswordPayload,
+    token?: string
+  ): Promise<CreatePasswordResponse> => {
+    try {
+      const res = await api.post<CreatePasswordResponse>(
+        "/auth/create-password",
+        payload,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
+      );
+      return res.data;
+    } catch (error) {
+      handleAxiosError<CreatePasswordResponse>(
+        error,
+        "Failed to create password. Try again."
+      );
+    }
+  },
 
   forgotPassword: async (payload: ForgotPasswordPayload): Promise<ForgotPasswordResponse> => {
     try {
@@ -100,6 +120,15 @@ export const authService = {
       return res.data;
     } catch (error) {
       handleAxiosError<ResetPasswordResponse>(error, "Password reset failed. Try again.");
+    }
+  },
+
+  changePassword: async (payload: ChangePasswordPayload): Promise<ChangePasswordResponse> => {
+    try {
+      const res = await api.post<ChangePasswordResponse>("/auth/change-password", payload);
+      return res.data;
+    } catch (error) {
+      handleAxiosError<ChangePasswordResponse>(error, "Password change failed. Try again.");
     }
   },
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useProductStore } from "@/store/productStore";
-import { SupplierStore } from "@/store/supplierStore";
+import { useSupplierStore } from "@/store/supplierStore";
 import { Purchase } from "@/types/purchase";
 import ApproveRejectButtons from "./ApproveRejectButtons";
 
@@ -11,7 +11,7 @@ interface PurchaseCardProps {
 
 export default function PurchaseCard({ purchase }: PurchaseCardProps) {
   const { products } = useProductStore();
-  const { suppliers } = SupplierStore();
+  const { suppliers } = useSupplierStore();
 
   // ✅ Lookup the matching product and supplier
   const product = products.find((p) => p.product_id === purchase.product_id);

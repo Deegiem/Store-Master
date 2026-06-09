@@ -1,138 +1,145 @@
+// src/app/dashboard/manager/page.tsx
+"use client"
 
-"use client";
+import { useEffect } from "react"
+import { motion } from "framer-motion"
+import { useRouter } from "next/navigation"
+import { Building2, TrendingUp, Package, AlertTriangle, Truck, Sparkles, Eye } from "lucide-react"
+import { useDashboardStore } from "@/store/dashboardStore"
+import { usePermissions } from "@/hooks/usePermissions"
+import { StatCard } from "@/components/dashboard/StatCard"
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton"
+import { DashboardError } from "@/components/dashboard/DashboardError"
 
-import { useEffect, useState } from "react";
-import { useDashboardStore } from "@/store/dashboardStore";
-import { useUserStore } from "@/store/useUserStore";
-
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import { motion } from "framer-motion";
-
-export default function AdminDashboardPage() {
-  const {  loading, error } = useDashboardStore();
-  const { currentUser, fetchCurrentUser } = useUserStore();
-
-  const [today] = useState(
-    new Date().toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  );
+export default function StoreManagerDashboardPage() {
+  const router = useRouter()
+  const { canViewStoreManagerDashboard } = usePermissions()
+  const { storeManagerData, storeManagerLoading, storeManagerError, fetchStoreManagerDashboard } = useDashboardStore()
 
   useEffect(() => {
-    if (!currentUser) fetchCurrentUser();
-  }, [currentUser, fetchCurrentUser]);
+    if (canViewStoreManagerDashboard) {
+      fetchStoreManagerDashboard()
+    }
+  }, [canViewStoreManagerDashboard, fetchStoreManagerDashboard])
 
-  const userName = currentUser
-    ? `${currentUser.first_name} ${currentUser.last_name}`
-    : "User";
+  if (storeManagerLoading) return <DashboardSkeleton title="Store Manager Dashboard" />
+  if (storeManagerError) return <DashboardError message={storeManagerError} onRetry={fetchStoreManagerDashboard} />
+  if (!storeManagerData) return null
 
-  const chartData = [
-    { name: "Mon", sales: 3 },
-    { name: "Tue", sales: 4 },
-    { name: "Wed", sales: 13 },
-    { name: "Thu", sales: 4 },
-    { name: "Fri", sales: 2 },
-    { name: "Sat", sales: 12 },
-    { name: "Sun", sales: 7 },
-  ];
-
-  const activities = [
-    "New purchase order approved by Manager",
-    "Product ‘Industrial Wire’ restocked by 250 units",
-    "Supplier ‘Dangote PLC’ added to system",
-    "Low stock alert on ‘PVC Pipes’ triggered",
-    "Sales report generated for the week",
-  ];
+  const stats = [
+    {
+      label: "Total Sales Today",
+      value: storeManagerData.today_summary.total_sales,
+      icon: TrendingUp,
+      color: "blue" as const,
+    },
+    {
+      label: "Revenue",
+      value: `₦${storeManagerData.today_summary.total_revenue.toLocaleString()}`,
+      icon: Building2,
+      color: "green" as const,
+    },
+    {
+      label: "Low Stock Items",
+      value: storeManagerData.inventory_status.low_stock_count,
+      icon: AlertTriangle,
+      color: "amber" as const,
+    },
+    {
+      label: "Out of Stock",
+      value: storeManagerData.inventory_status.out_of_stock_count,
+      icon: Package,
+      color: "red" as const,
+    },
+  ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <main className="p-8 mt-9 space-y-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <h2 className="text-3xl font-semibold text-gray-900">
-            Welcome back,{" "}
-            <span className="text-[#000ac0]">{userName.split(" ")[0]}</span> 👋
-          </h2>
-          <p className="text-gray-500 mt-1">{today}</p>
-        </motion.div>
-
-        {/* Error Display */}
-        {error && (
-          <div className="bg-red-50 text-red-700 p-3 rounded-md border border-red-200">
-            {error}
-          </div>
-        )}
-
-        {/* Summary Cards */}
-       
-
-        {/* Sales Overview Chart */}
+    <div className="min-h-screen bg-[#F9FAFB] p-6">
+      <div className="mx-auto max-w-7xl space-y-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white p-6 rounded-2xl shadow-md border border-gray-100"
+          className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between"
         >
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Weekly Sales Overview
-          </h3>
-          <div className="w-full h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <XAxis dataKey="name" stroke="#555" />
-                <YAxis stroke="#555" />
-                <Tooltip />
-                <Bar dataKey="sales" fill="#000ac0" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </motion.div>
-
-        {/* Recent Activities */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white p-6 rounded-2xl shadow-md border border-gray-100"
-        >
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Recent Activities
-          </h3>
-          {loading ? (
-            <div className="space-y-2">
-              {[...Array(5)].map((_, i) => (
-                <div
-                  key={i}
-                  className="h-4 w-3/4 bg-gray-200 animate-pulse rounded"
-                ></div>
-              ))}
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
+              <Sparkles className="h-3.5 w-3.5" />
+              Store Operations
             </div>
-          ) : (
-            <ul className="space-y-3 text-gray-600">
-              {activities.map((activity, index) => (
-                <li key={index} className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-[#000ac0] rounded-full"></div>
-                  <span>{activity}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+            <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 lg:text-4xl">
+              Store Manager Dashboard
+            </h1>
+            <p className="mt-2 text-sm text-slate-500">
+              Manage {storeManagerData.branch_name} branch operations
+            </p>
+          </div>
+          <div className="rounded-sm bg-white px-4 py-2 text-sm text-slate-600 border border-slate-200">
+            Avg Transaction: ₦{storeManagerData.today_summary.avg_transaction.toLocaleString()}
+          </div>
         </motion.div>
-      </main>
+
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map((stat, index) => (
+            <StatCard key={stat.label} {...stat} delay={index * 0.05} />
+          ))}
+        </div>
+
+        {/* Pending Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="rounded-sm border border-slate-200 bg-white p-5"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-amber-50">
+              <Truck className="h-5 w-5 text-amber-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">Pending Actions</h3>
+              <p className="text-sm text-slate-500">
+                {storeManagerData.pending_actions.transfers_to_approve} transfer{storeManagerData.pending_actions.transfers_to_approve !== 1 ? "s" : ""} to approve, 
+                {storeManagerData.pending_actions.incoming_transfers} incoming transfer{storeManagerData.pending_actions.incoming_transfers !== 1 ? "s" : ""}, 
+                {storeManagerData.pending_actions.incoming_purchase_orders} PO{storeManagerData.pending_actions.incoming_purchase_orders !== 1 ? "s" : ""} to receive
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Staff Performance */}
+        {storeManagerData.staff_performance_today.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="rounded-sm border border-slate-200 bg-white"
+          >
+            <div className="border-b border-slate-200 px-5 py-4">
+              <h3 className="font-semibold text-slate-900">Today's Staff Performance</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50">
+                  <tr>
+                    <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">Staff</th>
+                    <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">Sales</th>
+                    <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">Revenue</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {storeManagerData.staff_performance_today.map((staff, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50">
+                      <td className="px-5 py-3 font-medium text-slate-900">{staff.staff_name}</td>
+                      <td className="px-5 py-3 text-slate-600">{staff.sales_count} sales</td>
+                      <td className="px-5 py-3 font-semibold text-slate-900">₦{staff.revenue.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        )}
+      </div>
     </div>
-  );
+  )
 }

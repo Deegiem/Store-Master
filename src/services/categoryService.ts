@@ -1,20 +1,67 @@
-// /services/categoryService.ts
-import { api } from "@/lib/api";
-import { Category, CreateCategoryPayload } from "@/types/category";
+import { api } from "@/lib/api"
+
+import type {
+  Category,
+  CreateCategoryPayload,
+  CreateCategoryResponse,
+  GetCategoriesParams,
+  GetCategoriesResponse,
+  UpdateCategoryPayload,
+  UpdateCategoryResponse,
+  DeleteCategoryResponse,
+} from "@/types/category"
 
 export const categoryService = {
-  async getAll(): Promise<Category[]> {
-    const response = await api.get("/categories");
-    return response.data.data;
+
+  // ================= GET ALL =================
+  getCategories: async (
+    params?: GetCategoriesParams
+  ): Promise<GetCategoriesResponse> => {
+
+    const res = await api.get<GetCategoriesResponse>(
+      "/categories/",
+      { params }
+    )
+
+    return res.data
   },
 
-  async createBulk(payload: CreateCategoryPayload): Promise<string> {
-    const response = await api.post("/categories/bulk", payload);
-    return response.data;
+  // ================= CREATE =================
+  createCategory: async (
+    payload: CreateCategoryPayload
+  ): Promise<CreateCategoryResponse> => {
+
+    const res = await api.post<CreateCategoryResponse>(
+      "/categories/",
+      payload
+    )
+
+    return res.data
   },
 
-  async delete(categoryId: string): Promise<string> {
-    const response = await api.delete(`/categories/${categoryId}`);
-    return response.data;
+  // ================= UPDATE =================
+  updateCategory: async (
+    categoryId: string,
+    payload: UpdateCategoryPayload
+  ): Promise<UpdateCategoryResponse> => {
+
+    const res = await api.put<UpdateCategoryResponse>(
+      `/categories/${categoryId}`,
+      payload
+    )
+
+    return res.data
   },
-};
+
+  // ================= DELETE =================
+  deleteCategory: async (
+    categoryId: string
+  ): Promise<DeleteCategoryResponse> => {
+
+    const res = await api.delete<DeleteCategoryResponse>(
+      `/categories/${categoryId}`
+    )
+
+    return res.data
+  },
+}
