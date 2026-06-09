@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePurchaseStore } from "@/store/purchaseStore";
 import { useProductStore } from "@/store/productStore";
-import { SupplierStore } from "@/store/supplierStore";
+import { useSupplierStore } from "@/store/supplierStore";
 import { Purchase } from "@/types/purchase";
 import PurchaseCard from "@/components/purchases/PurchaseCard";
 import { toast } from "react-hot-toast";
@@ -23,7 +23,7 @@ export default function AllPurchases({ filter = "all" }: PurchaseListProps) {
   } = usePurchaseStore();
 
   const { products, fetchProducts } = useProductStore();
-  const { suppliers, fetchSuppliers } = SupplierStore();
+  const { suppliers, fetchSuppliers } = useSupplierStore();
 
   const [hydrated, setHydrated] = useState<Purchase[]>([]);
 

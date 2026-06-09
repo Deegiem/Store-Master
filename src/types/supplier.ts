@@ -1,36 +1,57 @@
-// src/types/supplier.ts
 export interface Supplier {
-  supplier_id: string;
-  supplier_name: string;
-  contact_person: string;
-  email: string;
-  phone: string;
-  address: string;
-  company_name: string;
-  created_at: string;
-  updated_at: string;
-  created_by: string;
-  name?: string;
+  id: string
+  supplier_id?: string
+  name: string
+  supplier_name?: string
+  company_name?: string
+  contact_person: string
+  email: string
+  phone: string
+  address: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
 }
 
-export interface SupplierResponse {
-  count: number;
-  suppliers: Supplier[];
+export interface SupplierApiResponse {
+  _id?: string
+  id?: string
+  name: string
+  contact_person: string
+  email: string
+  phone: string
+  address: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
 }
 
 export interface CreateSupplierPayload {
-  supplier_name: string;
-  contact_person: string;
-  email: string;
-  phone: string;
-  address: string;
-  company_name: string;
+  name: string
+  contact_person: string
+  email: string
+  phone: string
+  address: string
+  is_active: boolean
 }
 
 export interface UpdateSupplierPayload {
-  name?: string;
-  contact_person?: string;
-  phone?: string;
-  email?: string;
-  address?: string;
+  name: string
+  contact_person: string
+  email: string
+  phone: string
+  address: string
+  is_active: boolean
+}
+
+export interface GetSuppliersResponse {
+  total: number
+  page: number
+  limit: number
+  pages: number
+  data: Supplier[]
+}
+
+export interface DeleteSupplierResponse {
+  message: string
 }

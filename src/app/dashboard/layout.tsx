@@ -1,31 +1,20 @@
+// src/app/dashboard/layout.tsx
 "use client";
 
 import { ReactNode } from "react";
-// import Navbar from "@/components/Navbar";
-// import Sidebar from "@/components/Sidebar";
+import Navigation from "@/components/Navigation";
 import { motion } from "framer-motion";
-// import { usePathname } from "next/navigation";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  // const pathname = usePathname();
-
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      {/* <Sidebar /> */}
+    <div className="flex min-h-screen bg-[#F9FAFB]">
+      {/* Sidebar Navigation */}
+      <Navigation />
 
-      {/* Main content area */}
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {/* <Navbar pathname={pathname} /> */}
-        <motion.main
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="flex-1 overflow-y-auto p-6"
-        >
-          {children}
-        </motion.main>
-      </div>
+      {/* Main content area - NO padding here, let pages handle their own padding */}
+      <main className="flex-1 lg:mt-0 mt-14 md:mt-12">
+        {children}
+      </main>
     </div>
   );
 }

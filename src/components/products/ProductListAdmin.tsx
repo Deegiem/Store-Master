@@ -23,7 +23,7 @@ export default function ProductList() {
 
   const handleUpdate = async () => {
     if (!editingProduct) return;
-    await updateProduct(editingProduct.product_id, form);
+    await updateProduct(editingProduct.product_id ?? editingProduct.id, form);
     setEditingProduct(null);
   };
 
@@ -53,7 +53,7 @@ export default function ProductList() {
           <tbody>
             {products.map((p, idx) => (
               <tr
-                key={p.product_id}
+                key={p.product_id ?? p.id}
                 className={`transition-all duration-200 ${
                   idx % 2 === 0 ? "bg-white" : "bg-blue-50/30"
                 } hover:bg-blue-100/50`}
@@ -65,7 +65,7 @@ export default function ProductList() {
                   {p.quantity}
                 </td>
                 <td className="px-5 py-3 border-b border-blue-100 text-gray-800 font-semibold">
-                  ₦{p.price.toLocaleString()}
+                  ₦{(p.price ?? 0).toLocaleString()}
                 </td>
                 <td className="px-5 py-3 border-b border-blue-100 text-gray-700">
                   {p.threshold}
@@ -79,7 +79,7 @@ export default function ProductList() {
                       Edit
                     </button>
                     <button
-                      onClick={() => deleteProduct(p.product_id)}
+                      onClick={() => deleteProduct(p.product_id ?? p.id)}
                       className="w-full sm:w-auto text-sm text-white bg-red-600 hover:bg-red-700 active:scale-95 rounded-md py-1.5 px-5 font-medium shadow-sm transition-all duration-150"
                     >
                       Delete

@@ -1,20 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSalesStore } from "@/store/saleStore";
-import { api } from "@/lib/api";
+import { salesService } from "@/services/saleService";
 
 interface Product {
   product_id: string;
   name: string;
 }
 
-export default function SearchSale() {
+export default function SearchSaleAdmin() {
   const { fetchSalesByProductId, sales, loading } = useSalesStore();
   const [products, setProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
 
-  const filteredProducts = products.filter(p =>
+  const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(query.toLowerCase())
   );
 
@@ -30,14 +30,19 @@ export default function SearchSale() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await api.get("/products");
-      setProducts(res.data);
+      try {
+        const res = await salesService.getProductsForSale({ limit: 200 });
+        setProducts(res.data ?? []);
+      } catch (err) {
+        void err;
+        setProducts([]);
+      }
     };
     fetchProducts();
   }, []);
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md  mx-auto space-y-4">
+    <div className="bg-white p-6 rounded-xl shadow-md mx-auto space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-[#1b42da]">Search Sales</h2>
         {query && (
@@ -58,11 +63,10 @@ export default function SearchSale() {
         className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#1b42da] focus:border-transparent transition"
       />
 
-      {/* Product suggestions */}
       {query && (
         <div className="space-y-2 max-h-60 overflow-y-auto border rounded-lg p-2">
           {filteredProducts.length > 0 ? (
-            filteredProducts.map(p => (
+            filteredProducts.map((p) => (
               <button
                 key={p.product_id}
                 onClick={() => handleSearch(p.product_id)}
@@ -77,23 +81,21 @@ export default function SearchSale() {
         </div>
       )}
 
-      {/* Loading */}
-      {loading && <p className="text-gray-500 text-center">Loading sales...</p>}
+      {loading.sales && <p className="text-gray-500 text-center">Loading sales...</p>}
 
-      {/* Sales results */}
-      {searching && !loading && (
+      {searching && !loading.sales && (
         <div className="space-y-4 mt-4">
           {sales.length > 0 ? (
-            sales.map(s => (
+            sales.map((s) => (
               <div
                 key={s.sale_id}
                 className="border p-4 rounded-xl shadow-sm hover:shadow-md transition"
               >
-                <h3 className="font-semibold text-[#1b42da]">{s.product_name}</h3>
-                <p className="text-gray-700"><strong>Quantity Sold:</strong> {s.quantity_sold}</p>
-                {s.total_sale_price && <p className="text-gray-700"><strong>Total:</strong> ₦{s.total_sale_price}</p>}
-                <p className="text-gray-500 text-sm"><strong>Sold By:</strong> {s.sold_by}</p>
-                <p className="text-gray-400 text-xs"><strong>Sold At:</strong> {new Date(s.sold_at).toLocaleString()}</p>
+                <h3 className="font-semibold text-[#1b42da]">{(s as any).product_name ?? s.sale_number}</h3>
+                <p className="text-gray-700"><strong>Items sold:</strong> {s.items_count ?? "-"}</p>
+                <p className="text-gray-700"><strong>Total:</strong> ₦{s.total_amount?.toLocaleString() ?? "-"}</p>
+                <p className="text-gray-500 text-sm"><strong>Sold By:</strong> {s.cashier_name ?? "-"}</p>
+                <p className="text-gray-400 text-xs"><strong>Sold At:</strong> {new Date(s.created_at).toLocaleString()}</p>
               </div>
             ))
           ) : (

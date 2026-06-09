@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSalesStore } from "@/store/saleStore";
-import { api } from "@/lib/api";
+import { salesService } from "@/services/saleService";
 
 interface Product {
   product_id: string;
@@ -30,8 +30,13 @@ export default function SearchSale() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await api.get("/products");
-      setProducts(res.data);
+      try {
+        const res = await salesService.getProductsForSale({ limit: 200 });
+        setProducts(res.data ?? []);
+      } catch (err) {
+        void err;
+        setProducts([]);
+      }
     };
     fetchProducts();
   }, []);

@@ -3,39 +3,46 @@
 
 import { useState, useEffect } from "react";
 import { useProductStore } from "@/store/productStore";
-import { useCategoryStore } from "@/store/categoryStore";
+import { useCategoryStore } from "@/store/useCategoryStore";
 import { CreateProductPayload } from "@/types/products";
 
-type ProductInput = CreateProductPayload["products"][number];
+type ProductInput = Omit<CreateProductPayload, 'category_id'>;
 
 
 export default function ProductForm() {
   const { categories, fetchCategories } = useCategoryStore();
-  const { addProducts, loading } = useProductStore();
+  const { createProduct, productloading } = useProductStore();
 
   const [categoryId, setCategoryId] = useState("");
-  const [products, setProducts] = useState([
-    { name: "", quantity: 0, price: 0, threshold: 5 },
-  ]);
+  const [product, setProduct] = useState<ProductInput>({
+    name: "",
+    sku: "",
+    barcode: "",
+    description: "",
+    low_stock_threshold: 5,
+    image_url: "",
+  });
 
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
   
-const handleChange = (i: number, field: keyof ProductInput, value: string | number) => {
-  const updated = [...products];
-  updated[i] = { ...updated[i], [field]: value } as ProductInput;
-  setProducts(updated);
-};
-
-  const addField = () =>
-    setProducts([...products, { name: "", quantity: 0, price: 0, threshold: 5 }]);
+  const handleChange = (field: keyof ProductInput, value: string | number) => {
+    setProduct({ ...product, [field]: value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!categoryId) return alert("Select a category first");
-    await addProducts({ category_id: categoryId, products });
-    setProducts([{ name: "", quantity: 0, price: 0, threshold: 5 }]);
+    await createProduct({ ...product, category_id: categoryId });
+    setProduct({
+      name: "",
+      sku: "",
+      barcode: "",
+      description: "",
+      low_stock_threshold: 5,
+      image_url: "",
+    });
   };
 
   return (
@@ -54,63 +61,63 @@ const handleChange = (i: number, field: keyof ProductInput, value: string | numb
         {categories.map((c) => (
           <option 
             className="rounded-md p-2"
-            key={c.category_id} value={c.category_id}>
+            key={c.id} value={c.id}>
             {c.name}
           </option>
         ))}
       </select>
-        <div className="grid sm:grid-cols-4 gap-3 m-1 space-y-1 text-[#bebec1]">
-            <label htmlFor="Headlines"></label>
-            <label htmlFor="Headlines">Quantity</label>
-            <label htmlFor="Headlines">Price</label>
-            <label htmlFor="Headlines">Threshold</label>
-        </div>
-      {products.map((p, i) => (
-        <div key={i} className="grid sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           <input
             placeholder="Product Name"
-            value={p.name}
-            onChange={(e) => handleChange(i, "name", e.target.value)}
+            value={product.name}
+            onChange={(e) => handleChange("name", e.target.value)}
             className="border rounded-md p-2"
+            required
           />
           <input
-            type="number"
-            placeholder="Quantity"
-            value={p.quantity}
-            onChange={(e) => handleChange(i, "quantity", Number(e.target.value))}
+            placeholder="SKU"
+            value={product.sku}
+            onChange={(e) => handleChange("sku", e.target.value)}
             className="border rounded-md p-2"
-          />
-          <input
-            type="number"
-            placeholder="Price"
-            value={p.price}
-            onChange={(e) => handleChange(i, "price", Number(e.target.value))}
-            className="border rounded-md p-2"
-          />
-          <input
-            type="number"
-            placeholder="Threshold"
-            value={p.threshold}
-            onChange={(e) => handleChange(i, "threshold", Number(e.target.value))}
-            className="border rounded-md p-2"
+            required
           />
         </div>
-      ))}
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            placeholder="Barcode"
+            value={product.barcode}
+            onChange={(e) => handleChange("barcode", e.target.value)}
+            className="border rounded-md p-2"
+          />
+          <input
+            type="number"
+            placeholder="Low Stock Threshold"
+            value={product.low_stock_threshold}
+            onChange={(e) => handleChange("low_stock_threshold", Number(e.target.value))}
+            className="border rounded-md p-2"
+            min="0"
+          />
+        </div>
+        <textarea
+          placeholder="Description"
+          value={product.description}
+          onChange={(e) => handleChange("description", e.target.value)}
+          className="border rounded-md p-2 w-full"
+          rows={3}
+        />
+        <input
+          placeholder="Image URL"
+          value={product.image_url}
+          onChange={(e) => handleChange("image_url", e.target.value)}
+          className="border rounded-md p-2 w-full"
+        />
         <div className="flex items-center justify-between mt-4">
             <button
-              type="button"
-              onClick={addField}
-              className="text-blue-600 hover:underline text-sm"
-            >
-              + Add Another Product
-            </button>
-
-            <button
               type="submit"
-              disabled={loading}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+              disabled={productloading.createProduct}
+              className="bg-[#101ae7] text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? "Saving..." : "Add Products"}
+              {productloading.createProduct ? "Creating..." : "Create Product"}
             </button>
         </div>
     </form>

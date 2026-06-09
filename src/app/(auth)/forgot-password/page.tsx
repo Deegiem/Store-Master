@@ -1,73 +1,30 @@
+// src/app/(auth)/forgot-password/page.tsx
 "use client"
 
-import { useState } from "react"
 import { useAuthStore } from "@/store/useAuthStore"
 import { motion } from "framer-motion"
-import { Loader2 } from "lucide-react"
-
-// import { useRouter } from "next/router"
+import ForgotPasswordForm from "@/components/auth-components/ForgotPasswordForm"
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("")
-  const { forgotPassword, isLoading } = useAuthStore();
-    const successMessage = useAuthStore((state) => state.successMessage);
-    const errorMessage = useAuthStore((state) => state.errorMessage);
-  // const router = useRouter();  
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    await forgotPassword({ email })
-    // router.push("/verify-reset-otp")
-  }
+  const successMessage = useAuthStore((state) => state.successMessage);
+  const errorMessage = useAuthStore((state) => state.errorMessage);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#F9FAFB] font-sans">
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md"
+        className="bg-white p-10 rounded-sm w-full max-w-[440px] flex flex-col items-center"
       >
-        <h2 className="text-2xl font-semibold text-gray-800 text-center mb-4">
-          Forgot Password
-        </h2>
-        <p className="text-gray-500 text-center mb-6 text-sm">
-          Enter your email address below and we’ll send you an OTP to reset your password.
-        </p>
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Store Master</h1>
+          <p className="text-sm text-slate-500 mt-1">Reset Your Password</p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email Address
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="you@example.com"
-            />
-          </div>
+        <ForgotPasswordForm />
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg font-semibold transition"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="animate-spin w-5 h-5" />
-                Sending...
-              </>
-            ) : (
-              "Send OTP"
-            )}
-          </button>
-        </form>
-
-        {/* ✅ Display messages */}
+        {/* Display messages */}
         {successMessage && (
           <div className="mt-4 text-sm text-green-600 text-center font-medium">
             {successMessage}
@@ -80,12 +37,15 @@ export default function ForgotPasswordPage() {
           </div>
         )}
 
-        <p className="text-center text-sm text-gray-500 mt-6">
-          Remembered your password?{" "}
-          <a href="/login" className="text-blue-600 hover:underline">
-            Back to Login
-          </a>
-        </p>
+        {/* Back to Login Link */}
+        <div className="text-center pt-6">
+          <p className="text-sm text-slate-600">
+            Remembered your password?{' '}
+            <a href="/login" className="text-blue-600 font-bold hover:underline">
+              Back to Login
+            </a>
+          </p>
+        </div>
       </motion.div>
     </div>
   )

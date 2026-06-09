@@ -1,59 +1,58 @@
 // types/auth.ts
-export interface RegisterPayload {
-  first_name: string
-  last_name: string
-  email: string
-  role: string
-  phone_number: string
-  address: string
-  state: string
-  country: string
-}
-
-export interface RegisterResponse {
-  message: string
-  userId?: string
-  success?: boolean
-}
-
-export interface OtpPayload {
-  otp: string;
-}
-
-export interface VerifyOtpResponse {
-  message: string;
-  access_token: string; // optional if the backend returns a session token
-  user?: {
-    id: string;
-    name: string;
-    role: "admin" | "store manager" | "sales taff";
-  };
-  success?: boolean;
-  errorMessage?: string; // optional for client-side error handling
-}
-
-
 export interface LoginPayload {
   email: string;
   password: string;
 }
 
-export interface LoginResponse {
-  message: string;
-  token?: string;
-  token_type?: string;
-  profile: {
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone_number?: string | null;
-    address?: string | null;
-    state?: string | null;
-    country?: string | null;
-    role: "admin" | "store manager" | "sales staff";
-  };
+export interface RefreshTokenPayload {
+  refresh_token: string;
 }
 
+export interface LogoutPayload {
+  refresh_token: string;
+}
+
+
+export type LoginResponse = {
+  access_token: string
+  refresh_token: string
+  token_type: "bearer"
+  expires_in: number
+  refresh_expires_in: number
+  role: string
+  name: string
+  user_id: string
+  branch_id: string
+}
+
+export interface RefreshTokenResponse {
+  access_token: string
+  refresh_token: string
+  token_type: "bearer"
+  expires_in: number
+  refresh_expires_in: number
+  role: string
+  name: string
+  user_id: string
+  branch_id: string
+}
+
+export interface LogoutResponse {
+  message: string
+}
+
+export interface LogoutAllResponse {
+  message: string
+  sessions_revoked: number
+}
+
+export type ValidationError = {
+  detail: {
+    loc: (string | number)[]
+    msg: string
+    type: string
+  }[]
+}
 
 export interface CreatePasswordPayload {
   password: string
@@ -76,6 +75,16 @@ export interface ResetPasswordPayload {
 }
 
 export interface ResetPasswordResponse {
+  message: string
+  success?: boolean
+}
+
+export interface ChangePasswordPayload {
+  current_password: string
+  new_password: string
+}
+
+export interface ChangePasswordResponse {
   message: string
   success?: boolean
 }

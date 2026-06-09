@@ -1,8 +1,6 @@
-// import "../globals.css"
-// import { Inter } from "next/font/google"
-// import AuthHeader  from "@/components/AuthHeader"
-import AuthFooter from "@/components/AuthFooter"
-
+// app/(auth)/layout.tsx
+// Remove the html and body tags - just return a fragment or div
+import AuthFooter from "@/components/auth-components/AuthFooter"
 
 export const metadata = {
   title: "StoreMaster Onboarding",
@@ -11,12 +9,10 @@ export const metadata = {
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body >
-        {/* <AuthHeader /> */}
-        {children}
-        <AuthFooter />
-      </body>
-    </html>
+    <>
+      {/* <AuthHeader /> */}
+      {children}
+      <AuthFooter />
+    </>
   )
 }

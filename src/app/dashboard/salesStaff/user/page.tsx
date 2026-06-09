@@ -1,26 +1,22 @@
-// app/dashboard/admin/users/page.tsx
+// app/dashboard/salesStaff/user/page.tsx
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useUserStore } from "@/store/useUserStore";
-import MyProfileCard from "@/components/users/MyProfileCard";
-import UpdateProfileForm from "@/components/users/UpdateProfileForm";
-// import UsersProfileCard from "@/components/users/UsersProfileCard";
+import { MyProfileCard } from "@/components/users/MyProfileCard";
 
-export default function AdminUsersPage() {
-  const {  fetchCurrentUser, loading, error } = useUserStore();
-  const [editing, setEditing] = useState(false);
+export default function SalesStaffUserPage() {
+  const { fetchCurrentUser, loading, error } = useUserStore();
 
   useEffect(() => {
     fetchCurrentUser();
-  }, [ fetchCurrentUser]);
+  }, [fetchCurrentUser]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading.currentUser) return <p>Loading...</p>;
+  if (error.currentUser) return <p className="text-red-500">{error.currentUser}</p>;
 
   return (
     <div className="p-6 space-y-6">
-      <MyProfileCard onEdit={() => setEditing(true)} />
-      {editing && <UpdateProfileForm onClose={() => setEditing(false)} />}
+      <MyProfileCard />
     </div>
   );
 }

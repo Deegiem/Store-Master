@@ -1,11 +1,54 @@
-// /types/category.ts
+// ================= BASE CATEGORY =================
 export interface Category {
-  category_id: string;
-  name: string;
-  created_at?: string;
-  updated_at?: string;
+  id: string
+  category_id?: string
+  name: string
+  slug: string
+  description: string
+  icon: string
+  product_count?: number
+  products?: unknown[]
 }
 
+// ================= CREATE CATEGORY =================
 export interface CreateCategoryPayload {
-  categories: string[];
+  name: string
+  description: string
+  icon: string
+}
+
+export interface CreateCategoryResponse {
+  id: string
+  name: string
+  slug: string
+  description: string
+  icon: string
+}
+
+// ================= GET ALL CATEGORIES =================
+export interface GetCategoriesParams {
+  page?: number
+  limit?: number
+}
+
+export type GetCategoriesResponse = Category[]
+
+// ================= UPDATE CATEGORY =================
+export interface UpdateCategoryPayload {
+  name?: string
+  description?: string
+  icon?: string
+}
+
+export interface UpdateCategoryResponse {
+  id: string
+  name: string
+  slug: string
+  description: string
+  icon: string
+}
+
+// ================= DELETE CATEGORY =================
+export interface DeleteCategoryResponse {
+  message: string
 }

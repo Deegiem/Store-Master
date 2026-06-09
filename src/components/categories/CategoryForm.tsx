@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { useCategoryStore } from "@/store/categoryStore";
+import { useCategoryStore } from "@/store/useCategoryStore";
 
 export default function CategoryForm() {
   const { createCategories, loading } = useCategoryStore();

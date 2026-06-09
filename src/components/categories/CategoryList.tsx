@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useCategoryStore } from "@/store/categoryStore";
+import { useCategoryStore } from "@/store/useCategoryStore";
 
 export default function CategoryList() {
   const { categories, fetchCategories, loading } = useCategoryStore();
