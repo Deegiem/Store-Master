@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo, useCallback } from "react"
 import { Calendar, TrendingUp, Package, DollarSign, BarChart3, Building2 } from "lucide-react"
 import { RoleGuard } from "@/components/RoleGuard"
 import { usePermissions } from "@/hooks/usePermissions"
@@ -14,59 +14,70 @@ import type { AppRole } from "@/lib/roleMapper"
 
 export default function DailySalesPage() {
   const params = useParams()
-  const currentRole = params.role as string  // ← Add this line
-  const { userBranchId, canViewAllBranches, isSales, isManager } = usePermissions()
+  const currentRole = params.role as string
+  const { canViewAllBranches } = usePermissions()
   const { branches, fetchBranches } = useBranchStore()
-  const { sales, todaysSales, fetchSales, fetchTodaysSales, loading } = useSalesStore()
+  const { sales, fetchSales, loading } = useSalesStore()
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
   const [selectedBranchId, setSelectedBranchId] = useState("")
+  const [isDataLoaded, setIsDataLoaded] = useState(false)
 
-  // Load branches for admin users only
+  // Load branches for admin users
   useEffect(() => {
     if (canViewAllBranches && branches.length === 0) {
       fetchBranches()
     }
   }, [canViewAllBranches, branches.length, fetchBranches])
 
-  // Set initial branch for admin
-  useEffect(() => {
-    if (canViewAllBranches && branches.length > 0 && !selectedBranchId) {
-      setSelectedBranchId(branches[0]?.id || "")
+  // Create a stable fetch function using useCallback
+  const loadAllSales = useCallback(async () => {
+    if (isDataLoaded) return
+    try {
+      await fetchSales({}, undefined)
+      setIsDataLoaded(true)
+    } catch (err) {
+      console.error('Failed to load sales:', err)
     }
-  }, [canViewAllBranches, branches, selectedBranchId])
+  }, [fetchSales, isDataLoaded])
 
+  // Fetch ALL sales only once when component mounts
   useEffect(() => {
-    let branchFilter: string | undefined
+    loadAllSales()
+  }, [loadAllSales])
 
-    if (canViewAllBranches) {
-      // Admin: send branch_id if selected
-      branchFilter = selectedBranchId || undefined
-    } else {
-      // Sales staff and manager: DON'T send branch_id - API uses their account's branch automatically
-      branchFilter = undefined
-    }
-
-    // Fetch sales for selected date
-    fetchSales({
-      start_date: selectedDate,
-      end_date: selectedDate
-    }, branchFilter)
-
-    // Fetch today's summary - for sales staff, don't send branch_id
-    // For admin, only fetch if branch is selected
-    if (canViewAllBranches) {
-      if (selectedBranchId) {
-        fetchTodaysSales(selectedBranchId)
+  // Client-side filtering by date AND branch
+  const filteredSales = useMemo(() => {
+    let filtered = [...sales]
+    
+    // Filter by date
+    filtered = filtered.filter(sale => {
+      const saleDate = new Date(sale.created_at).toISOString().split('T')[0]
+      return saleDate === selectedDate
+    })
+    
+    // Filter by branch (client-side since API doesn't support it)
+    if (selectedBranchId) {
+      const selectedBranchName = branches.find(b => b.id === selectedBranchId)?.name
+      if (selectedBranchName) {
+        filtered = filtered.filter(sale => sale.branch_name === selectedBranchName)
       }
-    } else {
-      // Sales staff and manager - API uses their branch automatically
-      fetchTodaysSales(undefined)
     }
-  }, [selectedDate, selectedBranchId, canViewAllBranches, fetchSales, fetchTodaysSales])
+    
+    return filtered
+  }, [sales, selectedDate, selectedBranchId, branches])
+
+  // Calculate stats from filtered sales
+  const dailyStats = useMemo(() => {
+    const totalSales = filteredSales.length
+    const totalRevenue = filteredSales.reduce((sum, sale) => sum + sale.total_amount, 0)
+    const totalItems = filteredSales.reduce((sum, sale) => sum + sale.items_count, 0)
+    const avgTransaction = totalSales > 0 ? totalRevenue / totalSales : 0
+    
+    return { totalSales, totalRevenue, totalItems, avgTransaction }
+  }, [filteredSales])
 
   const allowedRoles: AppRole[] = ["admin", "manager", "sales"]
 
-  // Format date for display
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString(undefined, {
       year: 'numeric',
@@ -98,6 +109,7 @@ export default function DailySalesPage() {
                   onChange={(e) => setSelectedBranchId(e.target.value)}
                   className="flex-1 max-w-xs rounded-sm border border-slate-200 bg-[#F3F4F6] px-3 py-2 text-sm text-slate-900 focus:border-[#003e9d] focus:outline-none focus:ring-1 focus:ring-[#003e9d]"
                 >
+                  <option value="">All Branches</option>
                   {branches.map((branch) => (
                     <option key={branch.id} value={branch.id}>
                       {branch.name}
@@ -122,103 +134,79 @@ export default function DailySalesPage() {
             </div>
           </div>
 
-          {/* Daily Stats - Only show if we have data */}
-          {todaysSales && !loading.todaysSales ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="rounded-sm border border-slate-200 bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                      Total Sales
-                    </p>
-                    <h2 className="mt-2 text-2xl font-bold text-slate-900">
-                      {selectedDate === new Date().toISOString().split('T')[0]
-                        ? todaysSales.total_sales
-                        : sales.length}
-                    </h2>
-                    <p className="text-xs text-slate-400">{formatDate(selectedDate)}</p>
-                  </div>
-                  <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-blue-50">
-                    <TrendingUp className="h-5 w-5 text-blue-600" />
-                  </div>
+          {/* Daily Stats */}
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-sm border border-slate-200 bg-white p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                    Total Sales
+                  </p>
+                  <h2 className="mt-2 text-2xl font-bold text-slate-900">
+                    {dailyStats.totalSales}
+                  </h2>
+                  <p className="text-xs text-slate-400">{formatDate(selectedDate)}</p>
                 </div>
-              </div>
-
-              <div className="rounded-sm border border-slate-200 bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                      Revenue
-                    </p>
-                    <h2 className="mt-2 text-2xl font-bold text-slate-900">
-                      ₦{(selectedDate === new Date().toISOString().split('T')[0]
-                        ? todaysSales.total_revenue
-                        : sales.reduce((sum, sale) => sum + sale.total_amount, 0)
-                      ).toLocaleString()}
-                    </h2>
-                  </div>
-                  <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-green-50">
-                    <DollarSign className="h-5 w-5 text-green-600" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-sm border border-slate-200 bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                      Items Sold
-                    </p>
-                    <h2 className="mt-2 text-2xl font-bold text-slate-900">
-                      {selectedDate === new Date().toISOString().split('T')[0]
-                        ? todaysSales.total_items_sold
-                        : sales.reduce((sum, sale) => sum + sale.items_count, 0)
-                      }
-                    </h2>
-                  </div>
-                  <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-purple-50">
-                    <Package className="h-5 w-5 text-purple-600" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-sm border border-slate-200 bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                      Avg Transaction
-                    </p>
-                    <h2 className="mt-2 text-2xl font-bold text-slate-900">
-                      ₦{(selectedDate === new Date().toISOString().split('T')[0]
-                        ? todaysSales.average_transaction_value
-                        : sales.length > 0
-                          ? sales.reduce((sum, sale) => sum + sale.total_amount, 0) / sales.length
-                          : 0
-                      ).toLocaleString()}
-                    </h2>
-                  </div>
-                  <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-amber-50">
-                    <BarChart3 className="h-5 w-5 text-amber-600" />
-                  </div>
+                <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-blue-50">
+                  <TrendingUp className="h-5 w-5 text-blue-600" />
                 </div>
               </div>
             </div>
-          ) : loading.todaysSales ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="rounded-sm border border-slate-200 bg-white p-5 animate-pulse">
-                  <div className="h-4 w-20 bg-slate-200 rounded" />
-                  <div className="mt-2 h-8 w-32 bg-slate-200 rounded" />
+
+            <div className="rounded-sm border border-slate-200 bg-white p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                    Revenue
+                  </p>
+                  <h2 className="mt-2 text-2xl font-bold text-slate-900">
+                    ₦{dailyStats.totalRevenue.toLocaleString()}
+                  </h2>
                 </div>
-              ))}
+                <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-green-50">
+                  <DollarSign className="h-5 w-5 text-green-600" />
+                </div>
+              </div>
             </div>
-          ) : null}
+
+            <div className="rounded-sm border border-slate-200 bg-white p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                    Items Sold
+                  </p>
+                  <h2 className="mt-2 text-2xl font-bold text-slate-900">
+                    {dailyStats.totalItems}
+                  </h2>
+                </div>
+                <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-purple-50">
+                  <Package className="h-5 w-5 text-purple-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-sm border border-slate-200 bg-white p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                    Avg Transaction
+                  </p>
+                  <h2 className="mt-2 text-2xl font-bold text-slate-900">
+                    ₦{dailyStats.avgTransaction.toLocaleString()}
+                  </h2>
+                </div>
+                <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-amber-50">
+                  <BarChart3 className="h-5 w-5 text-amber-600" />
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Sales Table */}
           {loading.sales ? (
             <SalesTableSkeleton />
-          ) : sales.length > 0 ? (
-            <SalesListTable sales={sales} currentRole={currentRole} />  // ← Add currentRole prop
+          ) : filteredSales.length > 0 ? (
+            <SalesListTable sales={filteredSales} currentRole={currentRole} />
           ) : (
             <EmptySalesState message={`No sales found for ${formatDate(selectedDate)}`} />
           )}
