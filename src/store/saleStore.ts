@@ -127,7 +127,6 @@ export const useSalesStore = create<SalesStore>((set) => ({
     set((state) => ({
       loading: { ...state.loading, quote: true },
       error: { ...state.error, quote: null },
-      quote: null,
       saleCreationResponse: null,
     }))
 
@@ -163,8 +162,7 @@ export const useSalesStore = create<SalesStore>((set) => ({
   },
 
   fetchSales: async (params = {}, branch_id) => {
-    const startTime = Date.now()
-    console.log('⏱️ Starting API call...')
+    console.log('🏪 Store fetchSales called with:', { params, branch_id })
 
     set((state) => ({
       loading: { ...state.loading, sales: true },
@@ -173,15 +171,10 @@ export const useSalesStore = create<SalesStore>((set) => ({
 
     try {
       const res = await salesService.getAllSales(params, branch_id)
-      console.log(`⏱️ API responded in ${Date.now() - startTime}ms`)
-      console.log(`📊 Received ${res.length} records`)
-
-      // If API takes > 2 seconds, the issue is backend
-      if (Date.now() - startTime > 2000) {
-        console.warn('⚠️ API is slow! Consider backend optimization')
-      }
+      console.log('📊 API returned sales:', res.length)
       set({ sales: res, loading: { ...get().loading, sales: false } })
     } catch (err: any) {
+      console.error('❌ Error fetching sales:', err)
       set({
         error: { ...get().error, sales: err.message || "Failed to fetch sales" },
         loading: { ...get().loading, sales: false },
@@ -215,6 +208,8 @@ export const useSalesStore = create<SalesStore>((set) => ({
 
     try {
       const res = await salesService.getSaleById(sale_id, branch_id)
+      console.log('🔍 Sale detail response:', res) // Add this
+      console.log('💰 Discount value:', res.discount) // Add this
       set({ selectedSale: res, loading: { ...get().loading, saleDetail: false } })
     } catch (err: any) {
       set({

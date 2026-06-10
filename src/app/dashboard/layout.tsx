@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <Navigation />
 
       {/* Main content area - NO padding here, let pages handle their own padding */}
-      <main className="flex-1 lg:mt-0 mt-14 md:mt-12">
+      <main className="flex-1 overflow-x-auto lg:mt-0 mt-14 md:mt-12">
         {children}
       </main>
     </div>

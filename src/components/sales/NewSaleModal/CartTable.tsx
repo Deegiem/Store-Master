@@ -8,10 +8,9 @@ interface CartTableProps {
   quote: SaleQuoteResponse | null
   onUpdateQuantity: (productId: string, quantity: number) => void
   onRemove: (productId: string) => void
-  isUpdating?: boolean // Optional loading prop
 }
 
-export function CartTable({ cart, quote, onUpdateQuantity, onRemove, isUpdating = false }: CartTableProps) {
+export function CartTable({ cart, quote, onUpdateQuantity, onRemove }: CartTableProps) {
   if (!quote) return null
 
   return (
@@ -63,7 +62,7 @@ export function CartTable({ cart, quote, onUpdateQuantity, onRemove, isUpdating 
                       <button
                         onClick={() => onUpdateQuantity(item.product_id, (cartItem?.quantity || 1) - 1)}
                         className="rounded-sm p-1 hover:bg-slate-100 transition-colors"
-                        disabled={!cartItem || cartItem.quantity <= 1 || isUpdating}
+                        disabled={!cartItem || cartItem.quantity <= 1}
                       >
                         <Minus className="h-3 w-3 text-slate-600" />
                       </button>
@@ -73,7 +72,7 @@ export function CartTable({ cart, quote, onUpdateQuantity, onRemove, isUpdating 
                       <button
                         onClick={() => onUpdateQuantity(item.product_id, (cartItem?.quantity || 0) + 1)}
                         className="rounded-sm p-1 hover:bg-slate-100 transition-colors"
-                        disabled={cartItem?.quantity === availableQuantity || isUpdating}
+                        disabled={cartItem?.quantity === availableQuantity}
                       >
                         <Plus className="h-3 w-3 text-slate-600" />
                       </button>
@@ -89,7 +88,6 @@ export function CartTable({ cart, quote, onUpdateQuantity, onRemove, isUpdating 
                     <button
                       onClick={() => onRemove(item.product_id)}
                       className="rounded-sm p-1 text-red-600 transition hover:bg-red-50"
-                      disabled={isUpdating}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>

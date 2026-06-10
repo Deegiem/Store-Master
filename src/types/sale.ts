@@ -48,6 +48,8 @@ export interface CreateSalePayload {
   payment_method: string
   till_number: string
   notes?: string
+  discount?: number  // Add this
+
 }
 
 export interface SaleCreateResponse {
