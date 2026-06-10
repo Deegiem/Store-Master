@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     images: [
       {
         // This will be dynamically generated, but fallback to static image
-        url: '/assets/dashboard-mockup.jpg',  // Note: NO '/src/' in the URL!
+        url: 'https://i.imgur.com/nPdrkNe.jpeg',  // Note: NO '/src/' in the URL!
         width: 1200,
         height: 630,
         alt: 'StoreMaster Dashboard Preview',
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'StoreMaster - Inventory Management System',
     description: 'Manage sales, inventory, procurement, and security reports all in one place.',
-    images: ['/assets/dashboard-mockup.jpg',]  // Note: NO '/src/' in the URL!],  // ✅ static file
+    images: ['https://i.imgur.com/nPdrkNe.jpeg',]  // Note: NO '/src/' in the URL!],  // ✅ static file
   },
 };
 
