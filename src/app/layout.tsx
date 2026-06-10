@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     images: [
       {
         // This will be dynamically generated, but fallback to static image
-        url: '/api/og',  // ← Dynamic OG endpoint
+        url: '/dashboard-mockup.jpg',   // ✅ static file
         width: 1200,
         height: 630,
         alt: 'StoreMaster Dashboard Preview',
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'StoreMaster - Inventory Management System',
     description: 'Manage sales, inventory, procurement, and security reports all in one place.',
-    images: ['/api/og'],  // ← Dynamic for Twitter too
+    images: ['/dashboard-mockup.jpg'],  // ✅ static file
   },
 };
 
