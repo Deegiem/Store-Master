@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { useParams } from "next/navigation"
 import { Plus, Building2 } from "lucide-react"
 import { RoleGuard } from "@/components/RoleGuard"
@@ -27,7 +27,7 @@ export default function SalesPage() {
     const [startDate, setStartDate] = useState("")
     const [endDate, setEndDate] = useState("")
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethodFilter>("all")
-    const [branchId, setBranchId] = useState("") // Start with empty string for "All Branches"
+    const [branchId, setBranchId] = useState("")
     const [showNewSaleModal, setShowNewSaleModal] = useState(false)
     const [selectedBranchForNewSale, setSelectedBranchForNewSale] = useState("")
 
@@ -38,8 +38,7 @@ export default function SalesPage() {
         }
     }, [canViewAllBranches, branches.length, fetchBranches])
 
-    // DO NOT auto-set branchId - let it default to empty string for "All Branches"
-
+    // Fetch ALL sales (API doesn't support branch filtering)
     const loadSales = useCallback(async () => {
         const params: any = {}
 
@@ -48,36 +47,14 @@ export default function SalesPage() {
         if (endDate) params.end_date = endDate
         if (paymentMethod !== "all") params.payment_method = paymentMethod
 
-        // Determine branch filter
-        let branchFilter: string | undefined
-        if (canViewAllBranches) {
-            // For admin: if branchId is empty, don't send branch filter (shows all branches)
-            // If branchId has a value, filter by that branch
-            branchFilter = branchId || undefined
-        } else if (userBranchId) {
-            // For non-admin: always filter by their branch
-            branchFilter = userBranchId
-        }
-
-        console.log('Fetching sales with:', { params, branchFilter }) // Debug log
-        await fetchSales(params, branchFilter)
-    }, [search, startDate, endDate, paymentMethod, branchId, canViewAllBranches, userBranchId, fetchSales])
+        // Don't send branch_id to API - it doesn't work
+        await fetchSales(params, undefined)
+    }, [search, startDate, endDate, paymentMethod, fetchSales])
 
     const loadTodaysSales = useCallback(async () => {
         if (!canViewTodaysSales) return
-
-        let branchFilter: string | undefined
-        if (canViewAllBranches) {
-            branchFilter = branchId || undefined
-        } else if (userBranchId) {
-            branchFilter = userBranchId
-        }
-
-        // Only fetch if we have a branch filter or we're admin (admin can see all branches)
-        if (branchFilter || canViewAllBranches) {
-            await fetchTodaysSales(branchFilter)
-        }
-    }, [canViewTodaysSales, canViewAllBranches, branchId, userBranchId, fetchTodaysSales])
+        await fetchTodaysSales(undefined)
+    }, [canViewTodaysSales, fetchTodaysSales])
 
     useEffect(() => {
         loadSales()
@@ -87,10 +64,25 @@ export default function SalesPage() {
         loadTodaysSales()
     }, [loadTodaysSales])
 
-    // Remove client-side filtering since API already handles it
+    // Client-side filtering for branch
+    const filteredSales = useMemo(() => {
+        let filtered = [...sales]
+        
+        // Filter by branch (client-side since API doesn't support it)
+        if (canViewAllBranches && branchId) {
+            filtered = filtered.filter(sale => sale.branch_name === branches.find(b => b.id === branchId)?.name)
+        } else if (!canViewAllBranches && userBranchId) {
+            const userBranchName = branches.find(b => b.id === userBranchId)?.name
+            if (userBranchName) {
+                filtered = filtered.filter(sale => sale.branch_name === userBranchName)
+            }
+        }
+        
+        return filtered
+    }, [sales, branchId, canViewAllBranches, userBranchId, branches])
+
     const allowedRoles: AppRole[] = ["admin", "manager", "sales"]
 
-    // Handle new sale button click
     const handleNewSaleClick = () => {
         if (canViewAllBranches && !branchId) {
             alert("Please select a branch first")
@@ -143,16 +135,22 @@ export default function SalesPage() {
                                     ))}
                                 </select>
                             </div>
+                            {!branchId && (
+                                <p className="mt-2 text-xs text-amber-600 flex items-center gap-1">
+                                    <span className="text-base">⚠️</span>
+                                    Please select a specific branch to create a new sale
+                                </p>
+                            )}
                         </div>
                     )}
 
                     {/* Stats */}
                     {canViewTodaysSales && todaysSales && (canViewAllBranches ? true : branchId) && (
                         <SalesStats
-                            total_sales={todaysSales.total_sales}
-                            total_revenue={todaysSales.total_revenue}
-                            total_items_sold={todaysSales.total_items_sold}
-                            average_transaction_value={todaysSales.average_transaction_value}
+                            total_sales={filteredSales.length}
+                            total_revenue={filteredSales.reduce((sum, sale) => sum + sale.total_amount, 0)}
+                            total_items_sold={filteredSales.reduce((sum, sale) => sum + sale.items_count, 0)}
+                            average_transaction_value={filteredSales.length > 0 ? filteredSales.reduce((sum, sale) => sum + sale.total_amount, 0) / filteredSales.length : 0}
                             currency_symbol="₦"
                         />
                     )}
@@ -171,11 +169,11 @@ export default function SalesPage() {
                         setBranchId={setBranchId}
                     />
 
-                    {/* Sales Table */}
+                    {/* Sales Table - Use filteredSales */}
                     {loading.sales ? (
                         <SalesTableSkeleton />
-                    ) : sales.length > 0 ? (
-                        <SalesListTable sales={sales} currentRole={currentRole} />
+                    ) : filteredSales.length > 0 ? (
+                        <SalesListTable sales={filteredSales} currentRole={currentRole} />
                     ) : (
                         <EmptySalesState message="No sales found matching your criteria" />
                     )}

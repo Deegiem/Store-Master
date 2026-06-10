@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect, useCallback, useTransition, useRef } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ShoppingCart, X, Loader2 } from "lucide-react"
+import { ShoppingCart, X } from "lucide-react"
 import { useSalesStore } from "@/store/saleStore"
 import { ProductSearchInput } from "./ProductSearchInput"
 import { CartTable } from "./CartTable"
@@ -23,7 +23,6 @@ export function NewSaleModal({ open, onClose, onSuccess, branchId }: NewSaleModa
   const [paymentMethod, setPaymentMethod] = useState("")
   const [tillNumber, setTillNumber] = useState("")
   const [notes, setNotes] = useState("")
-  const [isPending, startTransition] = useTransition()
   const quoteRequestRef = useRef<NodeJS.Timeout | null>(null)
   
   const { 
@@ -35,7 +34,7 @@ export function NewSaleModal({ open, onClose, onSuccess, branchId }: NewSaleModa
     clearQuote
   } = useSalesStore()
 
-  // Debounced quote request
+  // Debounced quote request - updates totals in background without clearing
   const debouncedRequestQuote = useCallback((items: SaleLineItem[], discountAmount: number) => {
     if (quoteRequestRef.current) {
       clearTimeout(quoteRequestRef.current)
@@ -43,9 +42,10 @@ export function NewSaleModal({ open, onClose, onSuccess, branchId }: NewSaleModa
     
     quoteRequestRef.current = setTimeout(() => {
       if (items.length > 0 && branchId) {
+        // Request new quote - store won't clear existing quote
         requestSaleQuote({ items, discount: discountAmount }, branchId)
       }
-    }, 300) // Wait 300ms before fetching quote
+    }, 300)
   }, [branchId, requestSaleQuote])
 
   // Reset state when modal opens/closes
@@ -64,12 +64,10 @@ export function NewSaleModal({ open, onClose, onSuccess, branchId }: NewSaleModa
   useEffect(() => {
     if (open && cart.length > 0 && branchId) {
       debouncedRequestQuote(cart, discount)
-    } else if (cart.length === 0) {
-      clearQuote()
     }
-  }, [cart, discount, open, branchId, debouncedRequestQuote, clearQuote])
+  }, [cart, discount, open, branchId, debouncedRequestQuote])
 
-  // Optimistic cart updates
+  // Optimistic cart updates - INSTANT
   const addToCart = (productId: string) => {
     setCart(prev => {
       const existing = prev.find(item => item.product_id === productId)
@@ -85,15 +83,14 @@ export function NewSaleModal({ open, onClose, onSuccess, branchId }: NewSaleModa
   }
 
   const updateQuantity = (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      setCart(prev => prev.filter(item => item.product_id !== productId))
-    } else {
-      setCart(prev =>
-        prev.map(item =>
-          item.product_id === productId ? { ...item, quantity } : item
-        )
+    setCart(prev => {
+      if (quantity <= 0) {
+        return prev.filter(item => item.product_id !== productId)
+      }
+      return prev.map(item =>
+        item.product_id === productId ? { ...item, quantity } : item
       )
-    }
+    })
   }
 
   const removeFromCart = (productId: string) => {
@@ -123,6 +120,7 @@ export function NewSaleModal({ open, onClose, onSuccess, branchId }: NewSaleModa
           payment_method: paymentMethod,
           till_number: tillNumber,
           notes: notes || undefined,
+          discount: discount || undefined,
         },
         branchId
       )
@@ -136,7 +134,6 @@ export function NewSaleModal({ open, onClose, onSuccess, branchId }: NewSaleModa
 
   const isValidPaymentMethod = quote?.payment_methods.includes(paymentMethod) ?? false
   const isCheckingOut = loading.createSale
-  const isGettingQuote = loading.quote || isPending
 
   return (
     <AnimatePresence>
@@ -170,7 +167,7 @@ export function NewSaleModal({ open, onClose, onSuccess, branchId }: NewSaleModa
             {/* Body */}
             <div className="p-5">
               <div className="grid gap-6 lg:grid-cols-2">
-                {/* Left Column - Product Search & Cart */}
+                {/* Left Column */}
                 <div className="space-y-6">
                   <ProductSearchInput onSelectProduct={addToCart} branchId={branchId} />
                   
@@ -181,9 +178,12 @@ export function NewSaleModal({ open, onClose, onSuccess, branchId }: NewSaleModa
                         quote={quote}
                         onUpdateQuantity={updateQuantity}
                         onRemove={removeFromCart}
-                        isUpdating={isGettingQuote}
                       />
-                      <DiscountInput discount={discount} setDiscount={setDiscount} />
+                      <DiscountInput 
+                        discount={discount} 
+                        setDiscount={setDiscount} 
+                        subtotal={quote?.subtotal || 0}
+                      />
                     </>
                   ) : (
                     <div className="rounded-sm border border-slate-200 bg-slate-50 p-8 text-center">
@@ -194,7 +194,7 @@ export function NewSaleModal({ open, onClose, onSuccess, branchId }: NewSaleModa
                   )}
                 </div>
 
-                {/* Right Column - Checkout */}
+                {/* Right Column */}
                 <div className="space-y-6">
                   {quote && (
                     <CheckoutForm
@@ -209,14 +209,8 @@ export function NewSaleModal({ open, onClose, onSuccess, branchId }: NewSaleModa
                       isLoading={isCheckingOut}
                       isValidPaymentMethod={isValidPaymentMethod}
                       cartEmpty={cart.length === 0}
+                      discount={discount}
                     />
-                  )}
-                  
-                  {isGettingQuote && cart.length > 0 && !quote && (
-                    <div className="rounded-sm border border-slate-200 bg-white p-6 text-center">
-                      <Loader2 className="mx-auto h-8 w-8 animate-spin text-[#003e9d]" />
-                      <p className="mt-2 text-sm text-slate-500">Calculating totals...</p>
-                    </div>
                   )}
                   
                   {error.createSale && (

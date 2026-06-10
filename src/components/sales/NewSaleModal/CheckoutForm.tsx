@@ -2,6 +2,8 @@
 
 import { CreditCard, Hash, FileText, AlertCircle } from "lucide-react"
 import type { SaleQuoteResponse } from "@/types/sale"
+import { useAdminStore } from "@/store/adminStore"
+import { useEffect, useState } from "react"
 
 interface CheckoutFormProps {
   quote: SaleQuoteResponse
@@ -15,6 +17,7 @@ interface CheckoutFormProps {
   isLoading: boolean
   isValidPaymentMethod: boolean
   cartEmpty: boolean
+  discount?: number
 }
 
 export function CheckoutForm({
@@ -29,7 +32,28 @@ export function CheckoutForm({
   isLoading,
   isValidPaymentMethod,
   cartEmpty,
+  discount = 0,
 }: CheckoutFormProps) {
+  const { systemSettings, fetchSystemSettings } = useAdminStore()
+  const [discountWarning, setDiscountWarning] = useState<string | null>(null)
+  
+  useEffect(() => {
+    if (!systemSettings) {
+      fetchSystemSettings()
+    }
+  }, [systemSettings, fetchSystemSettings])
+  
+  const maxPercentage = systemSettings?.max_discount_percentage ?? 0
+  const maxDiscountAmount = (quote.subtotal * maxPercentage) / 100
+  
+  useEffect(() => {
+    if (maxPercentage > 0 && discount > maxDiscountAmount) {
+      setDiscountWarning(`Discount of ₦${discount.toLocaleString()} exceeds the maximum allowed ${maxPercentage}% (₦${maxDiscountAmount.toLocaleString()})`)
+    } else {
+      setDiscountWarning(null)
+    }
+  }, [discount, maxDiscountAmount, maxPercentage, quote.subtotal])
+
   return (
     <div className="space-y-4">
       {/* Order Summary */}
@@ -67,6 +91,16 @@ export function CheckoutForm({
           </div>
         </div>
       </div>
+
+      {/* Discount Warning */}
+      {discountWarning && (
+        <div className="rounded-sm border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <span>{discountWarning}</span>
+          </div>
+        </div>
+      )}
 
       {/* Payment Method */}
       <div className="rounded-sm border border-slate-200 bg-white p-5">
@@ -126,14 +160,14 @@ export function CheckoutForm({
       {/* Checkout Button */}
       <button
         onClick={onSubmit}
-        disabled={cartEmpty || !paymentMethod || !isValidPaymentMethod || !tillNumber.trim() || isLoading}
+        disabled={cartEmpty || !paymentMethod || !isValidPaymentMethod || !tillNumber.trim() || isLoading || !!discountWarning}
         className="w-full rounded-sm bg-gradient-to-r from-[#003e9d] to-[#0050c9] py-3 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(0,71,195,0.25)] transition hover:-translate-y-0.5 disabled:opacity-50"
       >
         {isLoading ? "Processing..." : `Complete Sale (${quote.currency_symbol}${quote.total_amount.toLocaleString()})`}
       </button>
 
       {/* Validation Warnings */}
-      {!cartEmpty && (!paymentMethod || !isValidPaymentMethod || !tillNumber.trim()) && (
+      {!cartEmpty && !discountWarning && (!paymentMethod || !isValidPaymentMethod || !tillNumber.trim()) && (
         <div className="flex items-start gap-2 rounded-sm border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
           <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
           <div>
