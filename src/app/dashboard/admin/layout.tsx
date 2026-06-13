@@ -1,12 +1,18 @@
-import Navigation from "@/components/Navigation"
+import Navigation from "@/components/Navigation";
+import React from "react";
 
-export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
+
+export default function AdminDashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-[#F9FAFB]">
       <Navigation />
-      <main className="flex-1 ml-0 md:ml-64 p-6 bg-gray-50 min-h-screen">
+      <main className="flex-1 min-w-0 lg:ml-64 md:ml-64 p-6">
         {children}
       </main>
     </div>
-  )
+  );
 }

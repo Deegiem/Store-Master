@@ -52,8 +52,9 @@ export default function BranchDetailPage() {
 
   if (!selectedBranch) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] p-6">
-        <div className="mx-auto max-w-4xl">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-7xl space-y-6">
+        {/* <div className="mx-auto max-w-4xl"> */}
           <div className="flex flex-col items-center justify-center rounded-sm border border-red-200 bg-red-50 p-12 text-center">
             <Building2 className="h-12 w-12 text-red-400" />
             <p className="mt-4 text-lg font-semibold text-red-600">Branch Not Found</p>
@@ -113,7 +114,7 @@ export default function BranchDetailPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
       <div className="mx-auto max-w-6xl space-y-6">
         {/* Header */}
         <motion.div

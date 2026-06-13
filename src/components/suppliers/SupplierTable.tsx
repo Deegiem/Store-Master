@@ -39,19 +39,19 @@ export default function SupplierTable({ suppliers, loading }: SupplierTableProps
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Supplier
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Contact Person
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Contact Info
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Status
               </th>
-              <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Action
               </th>
             </tr>
@@ -93,7 +93,7 @@ export default function SupplierTable({ suppliers, loading }: SupplierTableProps
                     </div>
                   </div>
                 </td>
-                <td className="px-5 py-4">
+                <td className="whitespace-nowrap px-5 py-4">
                   <span
                     className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
                       supplier.is_active
@@ -104,7 +104,7 @@ export default function SupplierTable({ suppliers, loading }: SupplierTableProps
                     {supplier.is_active ? "Active" : "Inactive"}
                   </span>
                 </td>
-                <td className="px-5 py-4 text-right">
+                <td className="whitespace-nowrap px-5 py-4 text-right">
                   <Link
                     href={`/dashboard/admin/suppliers/${supplier.id}`}
                     className="inline-flex items-center gap-1 text-sm font-medium text-[#003e9d] transition hover:gap-2"

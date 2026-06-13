@@ -1,20 +1,18 @@
-"use client"
+"use client";
 
-import { useParams } from "next/navigation"
-import { RoleGuard } from "@/components/RoleGuard"
-import UserAuditDetailPage from "@/app/dashboard/admin/user-audit/[userId]/page"
-import type { AppRole } from "@/lib/roleMapper"
+import { useParams } from "next/navigation";
+import { RoleGuard } from "@/components/RoleGuard";
+import UserAuditDetailPage from "@/app/dashboard/admin/user-audit/[userId]/page";
+import type { AppRole } from "@/lib/roleMapper";
 
-interface PageProps {
-  params: Promise<{ userId: string }>
-}
+export default function DynamicUserAuditDetailPage() {
+  const allowedRoles: AppRole[] = ["admin"];
 
-export default function DynamicUserAuditDetailPage({ params }: PageProps) {
-  const allowedRoles: AppRole[] = ["admin"]
+  const params = useParams<{ userId: string }>();
 
   return (
     <RoleGuard allowedRoles={allowedRoles}>
-      <UserAuditDetailPage params={params} />
+      <UserAuditDetailPage params={Promise.resolve(params)} />
     </RoleGuard>
-  )
+  );
 }

@@ -298,19 +298,19 @@ export default function StoreInventoryPage() {
               <table className="min-w-full divide-y divide-slate-200">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                    <th className="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                    <th className="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                       Product ID
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                    <th className="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                       Quantity
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                    <th className="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                       Reason
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                    <th className="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                       Note
                     </th>
                   </tr>
@@ -328,7 +328,7 @@ export default function StoreInventoryPage() {
                         <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
                           {new Date(log.date).toLocaleString()}
                         </td>
-                        <td className="px-6 py-4 text-sm font-mono text-slate-600">
+                        <td className="whitespace-nowrap px-6 py-4 text-sm font-mono text-slate-600">
                           {log.product_id.slice(0, 8)}...
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold text-red-600">

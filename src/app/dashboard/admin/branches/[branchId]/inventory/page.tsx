@@ -4,7 +4,7 @@
 import { useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { ArrowLeft, Package, Box, AlertTriangle, CheckCircle } from "lucide-react"
+import { ArrowLeft, Package, Box, AlertTriangle, CircleMinus } from "lucide-react"
 import { useBranchStore } from "@/store/useBranchStore"
 import { InventoryKPICard } from "@/components/branches/InventoryKPICard"
 import { InventorySkeleton } from "@/components/branches/InventorySkeleton"
@@ -49,14 +49,14 @@ export default function BranchInventoryPage() {
     {
       label: "Out of Stock",
       value: inventory?.out_of_stock_count || 0,
-      icon: CheckCircle,
+      icon: CircleMinus,
       color: "red",
     },
   ]
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6">
-      <div className="mx-auto max-w-5xl space-y-6">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

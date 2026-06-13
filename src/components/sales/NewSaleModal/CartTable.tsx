@@ -24,19 +24,19 @@ export function CartTable({ cart, quote, onUpdateQuantity, onRemove }: CartTable
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Product
               </th>
-              <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Price
               </th>
-              <th className="px-5 py-4 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Quantity
               </th>
-              <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Total
               </th>
-              <th className="px-5 py-4 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Action
               </th>
             </tr>
@@ -48,16 +48,16 @@ export function CartTable({ cart, quote, onUpdateQuantity, onRemove }: CartTable
               
               return (
                 <tr key={item.product_id} className="border-b border-slate-100">
-                  <td className="px-5 py-4">
+                  <td className="whitespace-nowrap px-5 py-4">
                     <div>
                       <p className="font-medium text-slate-900">{item.product_name}</p>
                       <p className="text-xs text-slate-500">SKU: {item.sku}</p>
                     </div>
                   </td>
-                  <td className="px-5 py-4 text-right text-slate-600">
+                  <td className="whitespace-nowrap px-5 py-4 text-right text-slate-600">
                     ₦{item.unit_price.toLocaleString()}
                   </td>
-                  <td className="px-5 py-4">
+                  <td className="whitespace-nowrap px-5 py-4">
                     <div className="flex items-center justify-center gap-2">
                       <button
                         onClick={() => onUpdateQuantity(item.product_id, (cartItem?.quantity || 1) - 1)}
@@ -81,10 +81,10 @@ export function CartTable({ cart, quote, onUpdateQuantity, onRemove }: CartTable
                       <p className="mt-1 text-center text-[10px] text-red-500">Max stock</p>
                     )}
                   </td>
-                  <td className="px-5 py-4 text-right font-semibold text-slate-900">
+                  <td className="whitespace-nowrap px-5 py-4 text-right font-semibold text-slate-900">
                     ₦{item.line_total.toLocaleString()}
                   </td>
-                  <td className="px-5 py-4 text-center">
+                  <td className="whitespace-nowrap px-5 py-4 text-center">
                     <button
                       onClick={() => onRemove(item.product_id)}
                       className="rounded-sm p-1 text-red-600 transition hover:bg-red-50"

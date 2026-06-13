@@ -11,15 +11,15 @@ export const PERMISSIONS = {
   view_sales_dashboard: ["sales"],
 
   // ========== CATEGORY MANAGEMENT ==========
-  view_categories: ["admin", "manager", "purchase"],
+  view_categories: ["admin", "finance", "manager", "purchase", "sales"],  // Removed "store"
   create_category: ["admin"],
   update_category: ["admin"],
   delete_category: ["admin"],
 
   // ========== PRODUCT MANAGEMENT ==========
-  view_products: ["admin", "manager", "purchase", "sales"],  // Removed "store"
+  view_products: ["admin", "finance", "manager", "purchase", "sales"],  // Removed "store"
   create_product: ["admin"],
-  view_unpriced_products: ["finance"],
+  view_unpriced_products: ["admin", "finance"],
   set_product_price: ["admin", "finance"],
   view_product_price_history: ["admin", "finance", "purchase"],
   delete_product: ["admin"],
@@ -36,16 +36,16 @@ export const PERMISSIONS = {
   view_branch_procurement: ["manager"],  // Manager handles branch procurement
   
   create_procurement: ["admin", "purchase"],
-  view_pending_approvals: ["admin", "finance", "purchase", "manager"],
-  approve_procurement: ["finance"],
-  reject_procurement: ["finance"],
-  receive_procurement: ["manager"],  // Manager now receives goods (was "store")
+  view_pending_approvals: ["admin", "finance"],
+  approve_procurement: ["admin", "finance"],
+  reject_procurement: ["admin", "finance"],
+  receive_procurement: ["admin", "manager"],  // Manager now receives goods (was "store")
 
   // ========== INVENTORY ==========
-  view_inventory: ["admin", "manager"],  // Manager handles inventory
-  manage_inventory: ["admin", "manager"],
-  adjust_stock: ["admin", "manager"],
-  view_low_stock_alerts: ["admin", "manager"],
+  view_inventory: ["admin", "manager", "purchase"],  // Manager handles inventory
+  manage_inventory: ["admin", "manager", "purchase"],
+  adjust_stock: ["admin", "manager", "purchase"],
+  view_low_stock_alerts: ["admin", "manager", "purchase"],
 
   // ========== STOCK TRANSFERS ==========
   view_transfers: ["admin", "manager"],

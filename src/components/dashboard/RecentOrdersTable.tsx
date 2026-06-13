@@ -42,19 +42,19 @@ export function RecentOrdersTable({ orders, title = "Recent Purchase Orders", de
         <table className="w-full text-sm">
           <thead className="bg-slate-50">
             <tr>
-              <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 PO ID
               </th>
-              <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Amount
               </th>
-              <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Status
               </th>
-              <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Created
               </th>
-              <th className="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Action
               </th>
             </tr>
@@ -62,21 +62,21 @@ export function RecentOrdersTable({ orders, title = "Recent Purchase Orders", de
           <tbody className="divide-y divide-slate-100">
             {orders.map((order, idx) => (
               <tr key={order.po_id} className="hover:bg-slate-50">
-                <td className="px-5 py-3 font-mono text-xs text-slate-600">
+                <td className="whitespace-nowrap px-5 py-3 font-mono text-xs text-slate-600">
                   {order.po_id.slice(0, 8)}...
                 </td>
-                <td className="px-5 py-3 font-semibold text-slate-900">
+                <td className="whitespace-nowrap px-5 py-3 font-semibold text-slate-900">
                   ₦{order.total_amount.toLocaleString()}
                 </td>
-                <td className="px-5 py-3">
+                <td className="whitespace-nowrap px-5 py-3">
                   <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${getStatusColor(order.status)}`}>
                     {order.status}
                   </span>
                 </td>
-                <td className="px-5 py-3 text-slate-500">
+                <td className="whitespace-nowrap px-5 py-3 text-slate-500">
                   {new Date(order.created_at).toLocaleDateString()}
                 </td>
-                <td className="px-5 py-3 text-right">
+                <td className="whitespace-nowrap px-5 py-3 text-right">
                   <button
                     onClick={() => router.push(`/dashboard/purchase/procurement/${order.po_id}`)}
                     className="inline-flex items-center gap-1 text-[#003e9d] hover:underline"

@@ -1,9 +1,9 @@
-// src/app/dashboard/[role]/page.tsx
 "use client"
 
 import { useParams } from "next/navigation"
 import { usePermissions } from "@/hooks/usePermissions"
 import dynamic from "next/dynamic"
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton"
 
 // Dynamic imports with proper loading fallbacks
 const AdminDashboardPage = dynamic(() => import("@/app/dashboard/admin/page"), {
@@ -25,11 +25,8 @@ const SalesStaffDashboardPage = dynamic(() => import("@/app/dashboard/sales/page
   loading: () => <DashboardSkeleton title="Sales Dashboard" />,
 })
 
-import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton"
-
 export default function RoleDashboard() {
   const params = useParams()
-  const { role } = usePermissions()
   const currentRole = params.role as string
 
   // Route to the appropriate dashboard based on role

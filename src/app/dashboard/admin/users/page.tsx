@@ -44,8 +44,8 @@ export default function UsersPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] p-6">
-        <div className="mx-auto max-w-7xl">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-7xl space-y-6">
           <div className="flex flex-col items-center justify-center rounded-sm border border-amber-200 bg-amber-50 p-12 text-center">
             <p className="text-amber-600">Please log in to access this page</p>
           </div>
@@ -60,8 +60,8 @@ export default function UsersPage() {
 
   if (error.users || error.currentUser) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] p-6">
-        <div className="mx-auto max-w-7xl">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-7xl space-y-6">
           <div className="flex flex-col items-center justify-center rounded-sm border border-red-200 bg-red-50 p-12 text-center">
             <p className="text-red-600">System error loading users</p>
           </div>
@@ -74,7 +74,7 @@ export default function UsersPage() {
   const inactiveUsers = users?.filter(u => !u.is_active).length || 0
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Header */}
         <motion.div

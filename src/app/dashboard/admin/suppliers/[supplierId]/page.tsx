@@ -41,8 +41,8 @@ export default function SupplierDetailsPage() {
 
   if (error.selectedSupplier) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] p-6">
-        <div className="mx-auto max-w-4xl">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
           <div className="flex flex-col items-center justify-center rounded-sm border border-red-200 bg-red-50 p-12 text-center">
             <p className="text-red-600">{error.selectedSupplier}</p>
             <button
@@ -59,8 +59,8 @@ export default function SupplierDetailsPage() {
 
   if (!selectedSupplier) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] p-6">
-        <div className="mx-auto max-w-4xl">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
           <div className="flex flex-col items-center justify-center rounded-sm border border-slate-200 bg-white p-12 text-center">
             <Truck className="h-12 w-12 text-slate-400" />
             <p className="mt-4 text-lg font-semibold text-slate-900">Supplier not found</p>
@@ -84,8 +84,8 @@ export default function SupplierDetailsPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6">
-      <div className="mx-auto max-w-5xl space-y-6">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

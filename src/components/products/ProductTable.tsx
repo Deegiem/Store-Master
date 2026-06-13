@@ -33,22 +33,22 @@ export default function ProductTable({ products, loading }: Props) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Product
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 SKU
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Price
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Margin
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Status
               </th>
-              <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Action
               </th>
             </tr>
@@ -73,8 +73,8 @@ export default function ProductTable({ products, loading }: Props) {
                     </div>
                   </div>
                 </td>
-                <td className="px-5 py-4 font-mono text-xs text-slate-600">{product.sku}</td>
-                <td className="px-5 py-4 font-semibold text-slate-900">
+                <td className="whitespace-nowrap px-5 py-4 font-mono text-xs text-slate-600">{product.sku}</td>
+                <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-900">
                   ₦{product.price?.toLocaleString() ?? 0}
                 </td>
                 <td className="px-5 py-4">

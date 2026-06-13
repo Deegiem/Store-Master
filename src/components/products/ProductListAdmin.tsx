@@ -43,11 +43,11 @@ export default function ProductList() {
         <table className="min-w-full text-sm text-left border border-blue-100 rounded-lg overflow-hidden">
           <thead className="bg-blue-50 text-blue-700 uppercase text-xs font-semibold tracking-wide">
             <tr>
-              <th className="px-5 py-3 border-b border-blue-100">Name</th>
-              <th className="px-5 py-3 border-b border-blue-100">Qty</th>
-              <th className="px-5 py-3 border-b border-blue-100">Price</th>
-              <th className="px-5 py-3 border-b border-blue-100">Threshold</th>
-              <th className="px-5 py-3 border-b border-blue-100 text-center">Actions</th>
+              <th className="whitespace-nowrap px-5 py-3 border-b border-blue-100">Name</th>
+              <th className="whitespace-nowrap px-5 py-3 border-b border-blue-100">Qty</th>
+              <th className="whitespace-nowrap px-5 py-3 border-b border-blue-100">Price</th>
+              <th className="whitespace-nowrap px-5 py-3 border-b border-blue-100">Threshold</th>
+              <th className="whitespace-nowrap px-5 py-3 border-b border-blue-100 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -58,19 +58,19 @@ export default function ProductList() {
                   idx % 2 === 0 ? "bg-white" : "bg-blue-50/30"
                 } hover:bg-blue-100/50`}
               >
-                <td className="px-5 py-3 border-b border-blue-100 text-gray-800 font-medium">
+                <td className="whitespace-nowrap px-5 py-3 border-b border-blue-100 text-gray-800 font-medium">
                   {p.name}
                 </td>
-                <td className="px-5 py-3 border-b border-blue-100 text-gray-700">
+                <td className="whitespace-nowrap px-5 py-3 border-b border-blue-100 text-gray-700">
                   {p.quantity}
                 </td>
-                <td className="px-5 py-3 border-b border-blue-100 text-gray-800 font-semibold">
+                <td className="whitespace-nowrap px-5 py-3 border-b border-blue-100 text-gray-800 font-semibold">
                   ₦{(p.price ?? 0).toLocaleString()}
                 </td>
-                <td className="px-5 py-3 border-b border-blue-100 text-gray-700">
+                <td className="whitespace-nowrap px-5 py-3 border-b border-blue-100 text-gray-700">
                   {p.threshold}
                 </td>
-                <td className="px-5 py-3 border-b border-blue-100 text-center">
+                <td className="whitespace-nowrap px-5 py-3 border-b border-blue-100 text-center">
                   <div className="flex lg:flex-row sm:flex-col items-center justify-center gap-2">
                     <button
                       onClick={() => handleEdit(p)}

@@ -1,3 +1,5 @@
+// src/app/dashboard/sales/page.tsx
+
 "use client"
 
 import { useEffect } from "react"
@@ -24,9 +26,9 @@ export default function SalesStaffDashboardPage() {
   }, [canViewSalesDashboard, fetchSalesStaffDashboard])
 
   if (salesStaffLoading) return <DashboardSkeleton title="Sales Dashboard" />
-  
+
   if (salesStaffError) return <DashboardError message={salesStaffError} onRetry={fetchSalesStaffDashboard} />
-  
+
   if (!salesStaffData) return null
 
   const stats = [
@@ -131,22 +133,22 @@ export default function SalesStaffDashboardPage() {
                 <table className="w-full text-sm">
                   <thead className="bg-slate-50">
                     <tr>
-                      <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                      <th className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                         Sale Number
                       </th>
-                      <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                      <th className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                         Amount
                       </th>
-                      <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                      <th className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                         Items
                       </th>
-                      <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                      <th className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                         Payment Method
                       </th>
-                      <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                      <th className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                         Date
                       </th>
-                      <th className="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                      <th className="whitespace-nowrap px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                         Action
                       </th>
                     </tr>
@@ -154,20 +156,20 @@ export default function SalesStaffDashboardPage() {
                   <tbody className="divide-y divide-slate-100">
                     {salesStaffData.recent_sales.map((sale) => (
                       <tr key={sale.sale_number} className="hover:bg-slate-50">
-                        <td className="px-5 py-3 font-mono text-xs font-medium text-slate-900">
+                        <td className="whitespace-nowrap px-5 py-3 font-mono text-xs font-medium text-slate-900">
                           {sale.sale_number}
                         </td>
-                        <td className="px-5 py-3 font-semibold text-slate-900">
+                        <td className="whitespace-nowrap px-5 py-3 font-semibold text-slate-900">
                           ₦{sale.total_amount.toLocaleString()}
                         </td>
-                        <td className="px-5 py-3 text-slate-600">{sale.items_count} items</td>
-                        <td className="px-5 py-3 text-slate-600">
+                        <td className="whitespace-nowrap px-5 py-3 text-slate-600">{sale.items_count} items</td>
+                        <td className="whitespace-nowrap px-5 py-3 text-slate-600">
                           {(sale as any).payment_method || '—'}
                         </td>
-                        <td className="px-5 py-3 text-slate-500">
+                        <td className="whitespace-nowrap px-5 py-3 text-slate-500">
                           {new Date(sale.created_at).toLocaleString()}
                         </td>
-                        <td className="px-5 py-3 text-right">
+                        <td className="whitespace-nowrap px-5 py-3 text-right">
                           <button
                             onClick={() => router.push(`/dashboard/sales/${sale.sale_number}`)}
                             className="inline-flex items-center gap-1 text-[#003e9d] hover:underline"

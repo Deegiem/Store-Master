@@ -218,13 +218,7 @@ export function AuditDetailDrawer({ log, open, onClose }: AuditDetailDrawerProps
 
             {/* Footer */}
             <div className="sticky bottom-0 border-t border-slate-200 bg-white px-6 py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-slate-400" />
-                  <span className="text-xs text-slate-500">
-                    Event ID: {log.id}
-                  </span>
-                </div>
+              <div className="flex items-center justify-end">
                 <button
                   onClick={onClose}
                   className="inline-flex items-center gap-2 rounded-sm bg-gradient-to-r from-[#003e9d] to-[#0050c9] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(0,71,195,0.25)] transition hover:-translate-y-0.5"

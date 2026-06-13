@@ -32,8 +32,8 @@ export default function PriceHistoryPage() {
 
   if (error.priceHistory) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] p-6">
-        <div className="mx-auto max-w-4xl">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
           <div className="rounded-sm border border-red-200 bg-red-50 p-6 text-center">
             <p className="text-red-600">{error.priceHistory}</p>
             <Link href={`/dashboard/admin/products/${productId}`} className="mt-4 inline-block text-[#003e9d] underline">
@@ -47,8 +47,8 @@ export default function PriceHistoryPage() {
 
   if (!priceHistory) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] p-6">
-        <div className="mx-auto max-w-5xl">
+     <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
           <div className="rounded-sm border border-slate-200 bg-white p-12 text-center">
             <History className="mx-auto h-12 w-12 text-slate-400" />
             <p className="mt-4 text-lg font-semibold text-slate-900">No price history found</p>
@@ -90,7 +90,7 @@ export default function PriceHistoryPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
       <div className="mx-auto max-w-6xl space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -140,22 +140,22 @@ export default function PriceHistoryPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                  <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                     Date
                   </th>
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                  <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                     Old Price
                   </th>
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                  <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                     New Price
                   </th>
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                  <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                     Margin
                   </th>
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                  <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                     Changed By
                   </th>
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                  <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                     Reason
                   </th>
                 </tr>
@@ -163,16 +163,16 @@ export default function PriceHistoryPage() {
               <tbody>
                 {priceHistory.history.map((item, index) => (
                   <tr key={index} className="border-b border-slate-100 hover:bg-slate-50">
-                    <td className="px-5 py-4 text-slate-600">
+                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">
                       {new Date(item.change_date).toLocaleString()}
                     </td>
-                    <td className="px-5 py-4 text-slate-500">
+                    <td className="whitespace-nowrap px-5 py-4 text-slate-500">
                       {item.old_price ? `₦${item.old_price.toLocaleString()}` : "—"}
                     </td>
-                    <td className="px-5 py-4 font-semibold text-slate-900">
+                    <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-900">
                       ₦{item.new_price?.toLocaleString() ?? 0}
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="whitespace-nowrap px-5 py-4">
                       <span
                         className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
                           (item.new_margin ?? 0) >= 15
@@ -185,13 +185,13 @@ export default function PriceHistoryPage() {
                         {item.new_margin ?? 0}%
                       </span>
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="whitespace-nowrap px-5 py-4">
                       <div>
                         <p className="font-medium text-slate-900">{item.changed_by}</p>
                         <p className="text-xs text-slate-500">{item.changed_by_role}</p>
                       </div>
                     </td>
-                    <td className="px-5 py-4 text-slate-600">{item.reason || "—"}</td>
+                    <td className="whitespace-nowrap px-5 py-4 text-slate-600">{item.reason || "—"}</td>
                   </tr>
                 ))}
               </tbody>

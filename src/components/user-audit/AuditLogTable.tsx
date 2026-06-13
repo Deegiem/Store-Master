@@ -2,9 +2,9 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { 
-  Clock, 
-  Activity, 
+import {
+  Clock,
+  Activity,
   Database,
   Shield,
   ShoppingCart,
@@ -52,8 +52,8 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm">
+    <div className="rounded-sm bg-white overflow-x-auto">
+      <table className="w-full min-w-[900px] text-sm">
         <thead>
           <tr className="border-b border-slate-200 bg-slate-50">
             <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
@@ -86,16 +86,16 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
           {logs.map((log, index) => {
             const ModuleIcon = getModuleIcon(log.module)
             const actionColor = getActionColor(log.action)
-            
+
             return (
-              <motion.tr
+              <tr
                 key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.01 }}
+                // initial={{ opacity: 0, x: -20 }}
+                // animate={{ opacity: 1, x: 0 }}
+                // transition={{ delay: index * 0.01 }}
                 className="border-b border-slate-100 transition-colors hover:bg-slate-50"
               >
-                <td className="whitespace-nowrap px-5 py-4 text-xs text-slate-600">
+                <td className="px-5 py-4 text-xs text-slate-600">
                   {new Date(log.timestamp).toLocaleString()}
                 </td>
                 <td className="px-5 py-4">
@@ -115,7 +115,7 @@ export function AuditLogTable({ logs }: AuditLogTableProps) {
                 <td className="px-5 py-4 font-mono text-xs text-slate-500">
                   {log.ip_address || "-"}
                 </td>
-              </motion.tr>
+              </tr>
             )
           })}
         </tbody>

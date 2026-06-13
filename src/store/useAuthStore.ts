@@ -138,7 +138,10 @@ export const useAuthStore = create<AuthState>()(
           const now = Date.now();
           const tokenExpiry = now + res.expires_in * 1000;
           const refreshTokenExpiry = now + res.refresh_expires_in * 1000;
-
+          // In useAuthStore.ts, in the login function:
+          console.log('Token expires in:', res.expires_in, 'seconds')
+          console.log('Token expiry timestamp:', new Date(tokenExpiry).toLocaleString())
+          console.log('Refresh token expiry:', new Date(refreshTokenExpiry).toLocaleString())
           set({
             profile: user,
             token: res.access_token,
@@ -167,7 +170,7 @@ export const useAuthStore = create<AuthState>()(
 
       refreshTokenAction: async (): Promise<RefreshTokenResponse | null> => {
         const { refreshToken } = get();
-        
+
         if (!refreshToken) {
           console.log("No refresh token available");
           return null;
@@ -271,7 +274,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         const { refreshToken } = get();
-        
+
         // Try to revoke the refresh token on the server
         if (refreshToken) {
           try {
@@ -296,11 +299,11 @@ export const useAuthStore = create<AuthState>()(
 
         clearCookie("token");
         clearCookie("refresh_token");
-        
+
         if (typeof localStorage !== "undefined") {
           localStorage.removeItem("inventory-auth");
         }
-        
+
         if (typeof window !== "undefined") {
           window.location.href = "/login";
         }
@@ -312,7 +315,7 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           console.error("Logout all sessions API call failed:", error);
         }
-        
+
         // Clear local state
         set({
           profile: null,
@@ -327,11 +330,11 @@ export const useAuthStore = create<AuthState>()(
 
         clearCookie("token");
         clearCookie("refresh_token");
-        
+
         if (typeof localStorage !== "undefined") {
           localStorage.removeItem("inventory-auth");
         }
-        
+
         if (typeof window !== "undefined") {
           window.location.href = "/login";
         }

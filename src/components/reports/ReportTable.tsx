@@ -32,7 +32,7 @@ export function ReportTable<T>({
               {columns.map((col) => (
                 <th 
                   key={col.key} 
-                  className="px-5 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-600"
+                  className="whitespace-nowrap px-5 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-600"
                 >
                   {col.label}
                 </th>
@@ -43,7 +43,7 @@ export function ReportTable<T>({
             {rows.map((row, i) => (
               <tr key={i} className="hover:bg-slate-50 transition-colors">
                 {columns.map((col) => (
-                  <td key={col.key} className="px-5 py-4 text-slate-600">
+                  <td key={col.key} className="whitespace-nowrap px-5 py-4 text-slate-600">
                     {renderCell(row, col.key)}
                   </td>
                 ))}

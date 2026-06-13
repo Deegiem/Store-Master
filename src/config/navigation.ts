@@ -23,6 +23,8 @@ import {
   CreditCard,
   AlertCircle,
   Activity,
+  AlertTriangle,
+  UserCircle
 } from "lucide-react"
 
 export type AppRole = "admin" | "manager" | "finance" | "purchase" | "store" | "sales" | "guest"
@@ -45,6 +47,15 @@ export const DYNAMIC_NAVIGATION: DynamicNavItem[] = [
     visibleFor: ["admin", "manager", "finance", "purchase", "sales"]
   },
   
+    // Added this new "My Profile" item
+  { 
+    name: "My Profile", 
+    icon: UserCircle, 
+    href: "/dashboard/profile",  // Static route instead of dynamic
+    visibleFor: ["admin", "manager", "finance", "purchase", "sales"]
+  },
+
+
   // Access Control (Admin only)
   { 
     name: "Access Control", 
@@ -72,36 +83,37 @@ export const DYNAMIC_NAVIGATION: DynamicNavItem[] = [
   { 
     name: "Product Catalog", 
     icon: Package,
-    visibleFor: ["admin", "manager", "purchase"],
+    visibleFor: ["admin", "finance", "manager", "purchase", "sales"], // Removed "store"
     subItems: [
-      { name: "Products", icon: Package, href: "/dashboard/admin/products", visibleFor: ["admin", "manager", "purchase", "store", "sales"] },
-      { name: "Categories", icon: TableOfContents, href: "/dashboard/admin/categories", visibleFor: ["admin", "manager", "purchase"] },
+      { name: "Products", icon: Package, href: "/dashboard/admin/products", visibleFor: ["admin", "manager", "finance", "purchase", "store", "sales"] },
+      { name: "Categories", icon: TableOfContents, href: "/dashboard/admin/categories", visibleFor: ["admin", "manager", "finance", "purchase", "sales"] },
       { name: "Suppliers", icon: Container, href: "/dashboard/admin/suppliers", visibleFor: ["admin", "purchase"] },
     ]
   },
   
-  // Procurement
-  { 
-    name: "Procurement", 
-    icon: ShoppingCart,
-    visibleFor: ["admin", "manager", "finance", "purchase", "store"],
-    subItems: [
-      { name: "All Orders", icon: ClipboardList, href: "/dashboard/admin/procurement", visibleFor: ["admin", "manager", "finance", "purchase"] },
-      { name: "Pending Approvals", icon: Clock, href: "/dashboard/admin/procurement/pending-approval", visibleFor: ["admin", "finance", "purchase" ] },
-      { name: "Approved Orders", icon: CheckCircle, href: "/dashboard/admin/procurement/approved", visibleFor: ["admin", "manager", "finance", "purchase"] },
-      { name: "Rejected Orders", icon: XCircle, href: "/dashboard/admin/procurement/rejected", visibleFor: ["admin", "manager", "finance", "purchase"] },
-    ]
-  },
+// Procurement section - Update visibleFor based on API docs
+{ 
+  name: "Procurement", 
+  icon: ShoppingCart,
+  visibleFor: ["admin", "manager", "finance", "purchase"],
+  subItems: [
+    { name: "All Orders", icon: ClipboardList, href: "/dashboard/admin/procurement", visibleFor: ["admin", "manager", "finance", "purchase"] },
+    { name: "Pending Approvals", icon: Clock, href: "/dashboard/admin/procurement/pending-approval", visibleFor: ["admin", "finance"] }, // Only Admin & Finance
+    { name: "Approved Orders", icon: CheckCircle, href: "/dashboard/admin/procurement/approved", visibleFor: ["admin", "manager", "finance", "purchase"] },
+    { name: "Rejected Orders", icon: XCircle, href: "/dashboard/admin/procurement/rejected", visibleFor: ["admin", "manager", "finance", "purchase"] },
+  ]
+},
   
   // Inventory - Manager handles all inventory
 { 
   name: "Inventory", 
   icon: Warehouse,
-  visibleFor: ["admin", "manager"],
+  visibleFor: ["admin", "manager", "purchase"],  // Manager now has inventory access
   subItems: [
-    { name: "Branch Inventory", icon: Building2, href: "/dashboard/admin/inventory", visibleFor: ["admin", "manager"] },
-    { name: "Stock Transfers", icon: ArrowLeftRight, href: "/dashboard/admin/transfers", visibleFor: ["admin", "manager"] },
-    { name: "Global Adjustments", icon: AlertCircle, href: "/dashboard/admin/inventory/adjustments", visibleFor: ["admin"] },
+    { name: "Branch Inventory", icon: Building2, href: "/dashboard/admin/inventory", visibleFor: ["admin", "purchase", "manager"] },
+    { name: "Low Stock Overview", icon: AlertTriangle, href: "/dashboard/admin/inventory/low-stock", visibleFor: ["admin", "purchase"] },
+    { name: "Stock Transfers", icon: ArrowLeftRight, href: "/dashboard/admin/transfers", visibleFor: ["admin", "purchase", "manager"] },
+    { name: "Global Adjustments", icon: AlertCircle, href: "/dashboard/admin/inventory/adjustments", visibleFor: ["admin", "purchase"] },
   ]
 },
   
@@ -166,5 +178,11 @@ export const getFilteredNavigation = (role: AppRole): DynamicNavItem[] => {
 // Convert static href to dynamic role-based href
 export const getDynamicHref = (href: string | undefined, role: AppRole): string | undefined => {
   if (!href) return undefined
+  
+  // Special case for My Profile - always use the current role
+  if (href === "/dashboard/admin/users/me") {
+    return `/dashboard/${role}/users/me`
+  }
+  
   return href.replace("/dashboard/admin", `/dashboard/${role}`)
 }

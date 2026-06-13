@@ -213,7 +213,7 @@ export default function SalesReportsPage() {
                     {loading.sales ? (
                         <SalesTableSkeleton />
                     ) : sales.length > 0 ? (
-                        <div className="overflow-hidden rounded-sm border border-slate-200 bg-white">
+                        <div className="rounded-sm border border-slate-200 bg-white">
                             <div className="border-b border-slate-200 px-5 py-4">
                                 <h3 className="text-lg font-semibold text-slate-900">Transaction Details</h3>
                                 <p className="text-sm text-slate-500">
@@ -221,31 +221,31 @@ export default function SalesReportsPage() {
                                 </p>
                             </div>
                             <div className="overflow-x-auto">
-                                <table className="w-full text-sm">
-                                    <thead>
+                                <table className="w-fuull text-sm">
+                                    <thead className="bg-slate-50">
                                         <tr className="border-b border-slate-200 bg-slate-50">
-                                            <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                                            <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                                                 Sale Number
                                             </th>
-                                            <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                                            <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                                                 Branch
                                             </th>
-                                            <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                                            <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                                                 Cashier
                                             </th>
-                                            <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                                            <th className="whitespace-nowrap px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                                                 Items
                                             </th>
-                                            <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                                            <th className="whitespace-nowrap px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                                                 Total Amount
                                             </th>
-                                            <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                                            <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                                                 Payment Method
                                             </th>
-                                            <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                                            <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                                                 Status
                                             </th>
-                                            <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                                            <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                                                 Date
                                             </th>
                                         </tr>
@@ -257,25 +257,25 @@ export default function SalesReportsPage() {
                                                 className="border-b border-slate-100 cursor-pointer hover:bg-slate-50"
                                                 onClick={() => window.location.href = `/dashboard/admin/sales/${sale.sale_id}`}
                                             >
-                                                <td className="px-5 py-4 font-mono text-xs font-medium text-slate-900">
+                                                <td className="whitespace-nowrap px-5 py-4 font-mono text-xs font-medium text-slate-900">
                                                     {sale.sale_number}
                                                 </td>
-                                                <td className="px-5 py-4 text-slate-600">{sale.branch_name}</td>
-                                                <td className="px-5 py-4 text-slate-600">{sale.cashier_name}</td>
-                                                <td className="px-5 py-4 text-right text-slate-600">{sale.items_count}</td>
-                                                <td className="px-5 py-4 text-right font-semibold text-slate-900">
+                                                <td className="whitespace-nowrap px-5 py-4 text-slate-600">{sale.branch_name}</td>
+                                                <td className="whitespace-nowrap px-5 py-4 text-slate-600">{sale.cashier_name}</td>
+                                                <td className="whitespace-nowrap px-5 py-4 text-right text-slate-600">{sale.items_count}</td>
+                                                <td className="whitespace-nowrap px-5 py-4 text-right font-semibold text-slate-900">
                                                     ₦{sale.total_amount.toLocaleString()}
                                                 </td>
-                                                <td className="px-5 py-4 text-slate-600">{sale.payment_method}</td>
-                                                <td className="px-5 py-4">
+                                                <td className="whitespace-nowrap px-5 py-4 text-slate-600">{sale.payment_method}</td>
+                                                <td className="whitespace-nowrap px-5 py-4">
                                                     <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${sale.status === "Completed"
-                                                            ? "bg-green-50 text-green-700"
-                                                            : "bg-red-50 text-red-700"
+                                                        ? "bg-green-50 text-green-700"
+                                                        : "bg-red-50 text-red-700"
                                                         }`}>
                                                         {sale.status}
                                                     </span>
                                                 </td>
-                                                <td className="px-5 py-4 text-slate-500">
+                                                <td className="whitespace-nowrap px-5 py-4 text-slate-500">
                                                     {new Date(sale.created_at).toLocaleDateString()}
                                                 </td>
                                             </tr>
@@ -284,11 +284,11 @@ export default function SalesReportsPage() {
                                 </table>
                             </div>
                         </div>
-                    ) : (
-                        <EmptySalesState message={`No sales found for the selected period`} />
+                ) : (
+                <EmptySalesState message={`No sales found for the selected period`} />
                     )}
-                </div>
             </div>
-        </RoleGuard>
+        </div>
+        </RoleGuard >
     )
 }

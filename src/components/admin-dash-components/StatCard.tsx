@@ -1,4 +1,3 @@
-// src/components/StatCard.tsx
 "use client";
 
 import { motion } from "framer-motion"
@@ -17,6 +16,7 @@ interface StatCardProps {
   iconColor?: string
   delay?: number
   tooltipText?: string
+  currencySymbol?: string
 }
 
 export function StatCard({ 
@@ -28,8 +28,22 @@ export function StatCard({
   trendUp = true,
   bgColor = "bg-blue-50",
   iconColor = "text-blue-600",
-  delay = 0
+  delay = 0,
+  currencySymbol
 }: StatCardProps) {
+  // Format the display value
+  let displayValue: string
+  
+  if (typeof value === 'number') {
+    if (title.toLowerCase().includes("revenue")) {
+      displayValue = `${currencySymbol}${value.toLocaleString()}`
+    } else {
+      displayValue = value.toLocaleString()
+    }
+  } else {
+    displayValue = value
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -43,7 +57,7 @@ export function StatCard({
             {title}
           </p>
           <h2 className="mt-2 text-2xl font-bold text-slate-900">
-            {value}
+            {displayValue}
           </h2>
           {subtitle && (
             <p className="mt-1 text-xs text-slate-500">{subtitle}</p>

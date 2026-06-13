@@ -87,13 +87,6 @@ export function UserCard({ user, onClick, delay }: UserCardProps) {
           </span>
         )}
       </div>
-
-      <div className="mt-4 pt-3 border-t border-slate-100">
-        <div className="flex items-center justify-between text-xs text-slate-500">
-          <span>User ID</span>
-          <span className="font-mono text-xs">{user.user_id?.slice(0, 8)}...</span>
-        </div>
-      </div>
     </motion.div>
   )
 }

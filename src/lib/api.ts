@@ -100,7 +100,11 @@ api.interceptors.response.use(
     if (originalRequest._retry || !error.response) {
       return Promise.reject(error);
     }
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log('🔐 401 detected! Current token:', useAuthStore.getState().token?.slice(0, 50))
+      console.log('🔐 Refresh token exists:', !!useAuthStore.getState().refreshToken)
 
+    }
     if (error.response?.status === 401) {
       console.log('🔐 401 detected! Attempting refresh...');
       originalRequest._retry = true;

@@ -20,7 +20,8 @@ interface PageProps {
   params: Promise<{ userId: string }>
 }
 
-export default function UserAuditDetailPage({ params }: PageProps) {
+export default function 
+({ params }: PageProps) {
   const router = useRouter()
   const [userId, setUserId] = useState<string | null>(null)
   const [filterModule, setFilterModule] = useState<string>("all")
@@ -93,8 +94,8 @@ export default function UserAuditDetailPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
+    <div className="min-h-screen bg-[#F9FAFB] p-2">
+      <div className="mx-auto max-w-9xl space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -147,12 +148,11 @@ export default function UserAuditDetailPage({ params }: PageProps) {
           <UserInfoCard
             user={user}
             totalActions={audit?.total_actions}
-            userId={userId}
           />
         )}
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-4 items-end">
+        <div className="flex flex-wrap gap-4 items-end w-full">
           <div className="flex-1 min-w-[200px]">
             <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-2">
               Module Filter

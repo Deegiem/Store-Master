@@ -11,7 +11,7 @@ export function SalesTableSkeleton() {
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
               {[...Array(6)].map((_, i) => (
-                <th key={i} className="px-5 py-4 text-left">
+                <th key={i} className="whitespace-nowrap px-5 py-4 text-left">
                   <div className="h-3 w-20 bg-slate-200 rounded animate-pulse" />
                 </th>
               ))}
@@ -21,7 +21,7 @@ export function SalesTableSkeleton() {
             {[...Array(5)].map((_, i) => (
               <tr key={i} className="border-b border-slate-100">
                 {[...Array(6)].map((_, j) => (
-                  <td key={j} className="px-5 py-4">
+                  <td key={j} className="whitespace-nowrap px-5 py-4">
                     <div className="h-4 w-24 bg-slate-200 rounded animate-pulse" />
                   </td>
                 ))}

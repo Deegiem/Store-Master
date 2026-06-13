@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { Plus, Sparkles, Clock3 } from "lucide-react"
 import { useProcurementStore } from "@/store/useProcurementStore"
 import { usePermissions } from "@/hooks/usePermissions"
+import { useAuthStore } from "@/store/useAuthStore"
 import { filterProcurements } from "@/selectors/procurementSelectors"
 import { ProcurementStats } from "@/components/procurement/ProcurementStats"
 import { ProcurementFilters } from "@/components/procurement/ProcurementFilters"
@@ -19,12 +20,9 @@ type ProcurementStatusFilter = POStatus | "all"
 
 export default function ProcurementPage() {
   const router = useRouter()
+  const { profile } = useAuthStore() // Get profile from auth store
   const {
-    canViewPendingApprovals,
     canCreateProcurement,
-    canViewAllProcurement,
-    canViewOwnProcurement,
-    canViewBranchProcurement,
     isPurchase,
     isAdmin,
     isFinance,
@@ -33,36 +31,41 @@ export default function ProcurementPage() {
     userBranchId
   } = usePermissions()
 
-  const storeList = useProcurementStore((state) => state.list)
-  const storeFetchAll = useProcurementStore((state) => state.fetchAll)
-  const storeLoading = useProcurementStore((state) => state.loading.list)
-
-  const list = storeList
-  const loading = storeLoading
-
+  const { list, fetchAll, loading } = useProcurementStore()
   const [search, setSearch] = useState("")
   const [status, setStatus] = useState<ProcurementStatusFilter>("all")
   const [createOpen, setCreateOpen] = useState(false)
 
   useEffect(() => {
-    // Fetch based on user role
-    if (isAdmin || isFinance) {
-      storeFetchAll()
-    } else if (isPurchase) {
-      storeFetchAll({ created_by: useProcurementStore.getState().filters?.created_by })
-    } else if (isManager) {
-      storeFetchAll({ branch_id: userBranchId })
-    } else {
-      storeFetchAll()
+    // API Access Control:
+    // - Finance Manager / Admin: Can view all Purchase Orders system-wide
+    // - Purchase Manager: Can only view Purchase Orders they created
+    // - Store Manager: Can only view Purchase Orders for their assigned branch
+    const fetchOrders = async () => {
+      if (isAdmin || isFinance) {
+        // Admin/Finance: view all POs
+        await fetchAll()
+      } else if (isPurchase) {
+        // Purchase Manager: view only their own POs
+        await fetchAll({ created_by: profile?.id })
+      } else if (isManager && userBranchId) {
+        // Store Manager: view only POs for their branch
+        await fetchAll({ branch_id: userBranchId })
+      } else {
+        await fetchAll()
+      }
     }
-  }, [storeFetchAll, isAdmin, isFinance, isPurchase, isManager, userBranchId])
+    
+    fetchOrders()
+  }, [fetchAll, isAdmin, isFinance, isPurchase, isManager, userBranchId, profile?.id])
 
-  const canViewProcurement = canViewAllProcurement || canViewOwnProcurement || canViewBranchProcurement || isAdmin || isFinance || isPurchase || isManager
+  // Permission check based on API docs
+  const canViewProcurement = isAdmin || isFinance || isPurchase || isManager
 
   if (!canViewProcurement) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] p-6">
-        <div className="mx-auto max-w-7xl">
+      <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+        <div className="mx-auto max-w-6xl space-y-6">
           <div className="rounded-sm border border-red-200 bg-red-50 p-6 text-center">
             <Sparkles className="mx-auto h-12 w-12 text-red-400" />
             <p className="mt-4 text-lg font-semibold text-red-600">Access Denied</p>
@@ -78,8 +81,8 @@ export default function ProcurementPage() {
   const filtered = filterProcurements(list, search, status)
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -100,7 +103,8 @@ export default function ProcurementPage() {
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row">
-            {(canViewPendingApprovals || isAdmin || isFinance) && (
+            {/* Pending Approvals button - Only Admin and Finance Manager */}
+            {(isAdmin || isFinance) && (
               <button
                 onClick={() => router.push(`/dashboard/${role}/procurement/pending-approval`)}
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-sm border border-amber-200 bg-amber-50 px-5 text-sm font-semibold text-amber-700 transition-all hover:-translate-y-0.5 hover:shadow-md"
@@ -110,6 +114,7 @@ export default function ProcurementPage() {
               </button>
             )}
 
+            {/* Create PO button - Admin and Purchase Manager only */}
             {(canCreateProcurement && (isAdmin || isPurchase)) && (
               <button
                 onClick={() => setCreateOpen(true)}
@@ -122,14 +127,13 @@ export default function ProcurementPage() {
           </div>
         </motion.div>
 
-        {(isAdmin || isFinance || isPurchase || isManager) && (
-          <ProcurementStats
-            total={list.length}
-            pending={list.filter(x => x.status === "Pending Approval").length}
-            approved={list.filter(x => x.status === "Approved").length}
-            totalValue={list.reduce((acc, item) => acc + (item.total_amount || 0), 0)}
-          />
-        )}
+        {/* Stats - Show to all who can view procurement */}
+        <ProcurementStats
+          total={list.length}
+          pending={list.filter(x => x.status === "Pending Approval").length}
+          approved={list.filter(x => x.status === "Approved").length}
+          totalValue={list.reduce((acc, item) => acc + (item.total_amount || 0), 0)}
+        />
 
         <ProcurementFilters
           search={search}
@@ -138,13 +142,13 @@ export default function ProcurementPage() {
           setStatus={setStatus}
         />
 
-        {!loading && list.length > 0 && (
+        {!loading.list && list.length > 0 && (
           <p className="text-sm text-slate-500">
             Showing {filtered.length} of {list.length} purchase orders
           </p>
         )}
 
-        {loading ? (
+        {loading.list ? (
           <ProcurementSkeleton />
         ) : filtered.length === 0 ? (
           <EmptyProcurementState />

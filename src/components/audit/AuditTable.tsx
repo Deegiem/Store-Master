@@ -66,40 +66,40 @@ export function AuditTable({ logs, onSelect }: AuditTableProps) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 <div className="flex items-center gap-2">
                   <Clock className="h-3.5 w-3.5" />
                   Timestamp
                 </div>
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 <div className="flex items-center gap-2">
                   <User className="h-3.5 w-3.5" />
                   User
                 </div>
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Role
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Action
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 <div className="flex items-center gap-2">
                   <Database className="h-3.5 w-3.5" />
                   Module
                 </div>
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Target
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 IP Address
               </th>
-              <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Status
               </th>
-              <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+              <th className="whitespace-nowrap px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 Details
               </th>
             </tr>
@@ -117,18 +117,18 @@ export function AuditTable({ logs, onSelect }: AuditTableProps) {
                 <td className="whitespace-nowrap px-5 py-4 text-xs text-slate-600">
                   {formatDateTime(log.timestamp)}
                 </td>
-                <td className="px-5 py-4">
+                <td className="whitespace-nowrap px-5 py-4">
                   <div>
                     <p className="font-medium text-slate-900">{log.user_name || "System"}</p>
                     <p className="text-xs text-slate-500">{log.user_email}</p>
                   </div>
                 </td>
-                <td className="px-5 py-4">
+                <td className="whitespace-nowrap px-5 py-4">
                   <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
                     {log.user_role || "Unknown"}
                   </span>
                 </td>
-                <td className="px-5 py-4">
+                <td className="whitespace-nowrap px-5 py-4">
                   <div className="flex items-center gap-2">
                     {getSeverityIcon(log.action)}
                     <span className="text-sm font-medium text-slate-900">
@@ -136,16 +136,16 @@ export function AuditTable({ logs, onSelect }: AuditTableProps) {
                     </span>
                   </div>
                 </td>
-                <td className="px-5 py-4 text-slate-600">
+                <td className="whitespace-nowrap px-5 py-4 text-slate-600">
                   {log.module || "-"}
                 </td>
-                <td className="px-5 py-4 text-slate-600">
+                <td className="whitespace-nowrap px-5 py-4 text-slate-600">
                   {log.target_type || "-"}
                 </td>
-                <td className="px-5 py-4 font-mono text-xs text-slate-500">
+                <td className="whitespace-nowrap px-5 py-4 font-mono text-xs text-slate-500">
                   {log.ip_address || "-"}
                 </td>
-                <td className="px-5 py-4">
+                <td className="whitespace-nowrap px-5 py-4">
                   <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${getSeverityColor(log.action)}`}>
                     {log.action?.toUpperCase().includes("FAILED") ? "Failed" :
                       log.action?.toUpperCase().includes("CREATE") ? "Created" :
@@ -155,7 +155,7 @@ export function AuditTable({ logs, onSelect }: AuditTableProps) {
                               "Success"}
                   </span>
                 </td>
-                <td className="px-5 py-4 text-right">
+                <td className="whitespace-nowrap px-5 py-4 text-right">
                   <ChevronRight className="ml-auto h-5 w-5 text-slate-400 transition-transform group-hover:translate-x-1" />
                 </td>
               </motion.tr>

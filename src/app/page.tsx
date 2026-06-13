@@ -139,10 +139,11 @@ export default function LandingPage() {
           >
             <div className="w-full max-w-[560px] rounded-t-2xl overflow-hidden shadow-2xl border border-gray-200">
               <Image
-                src="/dashboard-mockup.jpg"
+                src="https://i.imgur.com/nPdrkNe.jpeg"
                 alt="Dashboard Preview"
                 width={560}
                 height={320}
+                unoptimized={true}
                 className="w-full h-auto"
               />
 

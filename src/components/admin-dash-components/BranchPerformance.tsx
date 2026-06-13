@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { 
   Building2, 
@@ -12,6 +12,8 @@ import {
   Users
 } from "lucide-react"
 import type { BranchRevenue } from "@/types/admin"
+import { useAdminStore } from "@/store/adminStore"
+import { useSalesStore } from "@/store/saleStore"
 
 interface Props {
   branches: BranchRevenue[]
@@ -19,8 +21,51 @@ interface Props {
 
 export function BranchPerformance({ branches }: Props) {
   const [expandedBranch, setExpandedBranch] = useState<string | null>(null)
+  const { systemSettings, fetchSystemSettings } = useAdminStore()
+  const { sales, fetchSales, loading } = useSalesStore()
+  const [productsSoldMap, setProductsSoldMap] = useState<Record<string, number>>({})
+  const [isLoadingSales, setIsLoadingSales] = useState(false)
   const safeBranches = Array.isArray(branches) ? branches : []
   
+  const currencySymbol = systemSettings?.currency_symbol || "₦"
+
+  useEffect(() => {
+    if (!systemSettings) {
+      fetchSystemSettings()
+    }
+  }, [systemSettings, fetchSystemSettings])
+
+  // Fetch sales data for each branch to calculate products sold
+  useEffect(() => {
+    const fetchProductsSoldForBranches = async () => {
+      if (safeBranches.length === 0) return
+      
+      setIsLoadingSales(true)
+      const salesMap: Record<string, number> = {}
+      
+      for (const branch of safeBranches) {
+        try {
+          // Fetch sales for this specific branch
+          await fetchSales({}, branch.branch_id)
+          
+          // Calculate total products sold from the sales that just loaded
+          // Note: We need to access the current state after fetchSales completes
+          const currentSales = useSalesStore.getState().sales
+          const totalProductsSold = currentSales.reduce((sum, sale) => sum + sale.items_count, 0)
+          salesMap[branch.branch_id] = totalProductsSold
+        } catch (err) {
+          console.error(`Failed to fetch sales for branch ${branch.branch_name}:`, err)
+          salesMap[branch.branch_id] = 0
+        }
+      }
+      
+      setProductsSoldMap(salesMap)
+      setIsLoadingSales(false)
+    }
+    
+    fetchProductsSoldForBranches()
+  }, [safeBranches, fetchSales])
+
   const maxRevenue = Math.max(...safeBranches.map(b => b.monthly_revenue), 0)
   const totalRevenue = safeBranches.reduce((sum, b) => sum + b.monthly_revenue, 0)
   const averageRevenue = safeBranches.length > 0 ? totalRevenue / safeBranches.length : 0
@@ -60,11 +105,15 @@ export function BranchPerformance({ branches }: Props) {
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
             <div>
               <p className="text-xs text-slate-500">Total Revenue</p>
-              <p className="text-base sm:text-lg font-bold text-slate-900">₦{totalRevenue.toLocaleString()}</p>
+              <p className="text-base sm:text-lg font-bold text-slate-900">
+                {currencySymbol}{totalRevenue.toLocaleString()}
+              </p>
             </div>
             <div>
               <p className="text-xs text-slate-500">Average Revenue</p>
-              <p className="text-base sm:text-lg font-bold text-slate-900">₦{averageRevenue.toLocaleString()}</p>
+              <p className="text-base sm:text-lg font-bold text-slate-900">
+                {currencySymbol}{averageRevenue.toLocaleString()}
+              </p>
             </div>
           </div>
         </div>
@@ -75,6 +124,8 @@ export function BranchPerformance({ branches }: Props) {
         {safeBranches.map((branch, index) => {
           const percentage = (branch.monthly_revenue / maxRevenue) * 100
           const isExpanded = expandedBranch === branch.branch_id
+          const productsSold = productsSoldMap[branch.branch_id] || 0
+          const activeStaffCount = branch.staff?.filter(s => s.is_active).length ?? 0
           
           return (
             <motion.div
@@ -96,7 +147,6 @@ export function BranchPerformance({ branches }: Props) {
                     </div>
                     <div>
                       <h3 className="font-semibold text-slate-900">{branch.branch_name}</h3>
-                      <p className="text-xs text-slate-500">ID: {branch.branch_id.slice(0, 8)}...</p>
                     </div>
                   </div>
                 </div>
@@ -105,7 +155,9 @@ export function BranchPerformance({ branches }: Props) {
                 <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-6">
                   <div>
                     <p className="text-xs text-slate-500">Monthly Revenue</p>
-                    <p className="text-base sm:text-lg font-bold text-slate-900">₦{branch.monthly_revenue.toLocaleString()}</p>
+                    <p className="text-base sm:text-lg font-bold text-slate-900">
+                      {currencySymbol}{branch.monthly_revenue.toLocaleString()}
+                    </p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-slate-500">Market Share</p>
@@ -151,7 +203,7 @@ export function BranchPerformance({ branches }: Props) {
                       <div className="min-w-0 flex-1">
                         <p className="text-xs text-slate-500">Revenue Target</p>
                         <p className="text-sm font-semibold text-slate-900 truncate">
-                          ₦{(branch.monthly_revenue * 1.2).toLocaleString()}
+                          {currencySymbol}{(branch.monthly_revenue * 1.2).toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -161,7 +213,7 @@ export function BranchPerformance({ branches }: Props) {
                       <div className="min-w-0 flex-1">
                         <p className="text-xs text-slate-500">Products Sold</p>
                         <p className="text-sm font-semibold text-slate-900">
-                          {Math.floor(branch.monthly_revenue / 5000).toLocaleString()}
+                          {isLoadingSales || loading.sales ? "Loading..." : productsSold.toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -171,7 +223,7 @@ export function BranchPerformance({ branches }: Props) {
                       <div className="min-w-0 flex-1">
                         <p className="text-xs text-slate-500">Active Staff</p>
                         <p className="text-sm font-semibold text-slate-900">
-                          {branch.staff?.filter(s => s.is_active).length ?? 0}
+                          {activeStaffCount}
                         </p>
                       </div>
                     </div>

@@ -26,7 +26,6 @@ export function ProcurementCard({ order, delay }: ProcurementCardProps) {
       <div className="flex items-start justify-between">
         <div>
           <h3 className="font-semibold text-slate-900">{order.supplier_name}</h3>
-          <p className="mt-0.5 text-xs text-slate-500">PO-{order.po_id.slice(0, 8)}</p>
         </div>
         <ProcurementStatusBadge status={order.status} />
       </div>

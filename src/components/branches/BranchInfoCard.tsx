@@ -48,12 +48,12 @@ export function BranchInfoCard({ branch }: BranchInfoCardProps) {
         ))}
       </div>
 
-      <div className="mt-4 pt-3 border-t border-slate-100">
+      {/* <div className="mt-4 pt-3 border-t border-slate-100">
         <div className="flex items-center justify-between">
           <span className="text-xs text-slate-500">Branch ID</span>
           <span className="font-mono text-xs text-slate-600">{branch.id}</span>
         </div>
-      </div>
+      </div> */}
     </motion.div>
   )
 }

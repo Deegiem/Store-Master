@@ -52,7 +52,7 @@ export default function ProductsPage() {
   }, [fetchCategories])
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
       <div className="mx-auto max-w-7xl space-y-6">
         {/* HEADER */}
         <motion.div

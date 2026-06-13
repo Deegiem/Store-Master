@@ -3,10 +3,10 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { motion } from "framer-motion"
-import { 
-  Shield, 
-  Search, 
-  Filter, 
+import {
+  Shield,
+  Search,
+  Filter,
   Download,
   Calendar,
   Activity,
@@ -47,7 +47,7 @@ export default function AuditPage() {
 
   const filteredLogs = auditLogs?.filter(log => {
     // Search filter
-    const matchesSearch = !searchQuery || 
+    const matchesSearch = !searchQuery ||
       log.user_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.user_email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.action?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -55,13 +55,13 @@ export default function AuditPage() {
 
     // Module filter
     const matchesModule = selectedModule === "all" || log.module === selectedModule
-    
+
     // Action filter
     const matchesAction = selectedAction === "all" || log.action === selectedAction
-    
+
     // Role filter
     const matchesRole = selectedRole === "all" || log.user_role === selectedRole
-    
+
     // Date range filter
     let matchesDate = true
     if (dateRange.start) {
@@ -76,7 +76,7 @@ export default function AuditPage() {
 
   const handleExport = () => {
     const dataStr = JSON.stringify(filteredLogs, null, 2)
-    const dataUri = "data:application/json;charset=utf-8,"+ encodeURIComponent(dataStr)
+    const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr)
     const exportFileDefaultName = `audit_logs_${new Date().toISOString()}.json`
     const linkElement = document.createElement('a')
     linkElement.setAttribute('href', dataUri)
@@ -89,8 +89,8 @@ export default function AuditPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6">
-      <div className="mx-auto max-w-[1400px] space-y-6">
+    <div className="min-h-screen bg-[#F9FAFB] p-2">
+      <div className="mx-auto max-w-9xl space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -109,7 +109,7 @@ export default function AuditPage() {
               System-wide activity monitoring & investigation hub
             </p>
           </div>
-          
+
           <div className="flex gap-3">
             <button
               onClick={() => setShowFilters(!showFilters)}

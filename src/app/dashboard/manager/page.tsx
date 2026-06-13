@@ -121,17 +121,17 @@ export default function StoreManagerDashboardPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">Staff</th>
-                    <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">Sales</th>
-                    <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">Revenue</th>
+                    <th className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">Staff</th>
+                    <th className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">Sales</th>
+                    <th className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">Revenue</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {storeManagerData.staff_performance_today.map((staff, idx) => (
                     <tr key={idx} className="hover:bg-slate-50">
-                      <td className="px-5 py-3 font-medium text-slate-900">{staff.staff_name}</td>
-                      <td className="px-5 py-3 text-slate-600">{staff.sales_count} sales</td>
-                      <td className="px-5 py-3 font-semibold text-slate-900">₦{staff.revenue.toLocaleString()}</td>
+                      <td className="whitespace-nowrap px-5 py-3 font-medium text-slate-900">{staff.staff_name}</td>
+                      <td className="whitespace-nowrap px-5 py-3 text-slate-600">{staff.sales_count} sales</td>
+                      <td className="whitespace-nowrap px-5 py-3 font-semibold text-slate-900">₦{staff.revenue.toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>

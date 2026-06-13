@@ -47,8 +47,8 @@ export default function ProductDetailsPage() {
 
   if (!selectedProduct) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] p-6">
-        <div className="mx-auto max-w-4xl">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-7xl space-y-6">
           <div className="rounded-sm border border-red-200 bg-red-50 p-6 text-center">
             <p className="text-red-600">Product not found</p>
             <Link href="/dashboard/admin/products" className="mt-4 inline-block text-[#003e9d] underline">
@@ -92,8 +92,8 @@ export default function ProductDetailsPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6">
-      <div className="mx-auto max-w-5xl space-y-6">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-7xl space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

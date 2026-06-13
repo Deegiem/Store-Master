@@ -1,6 +1,6 @@
-// src/app/dashboard/[role]/layout.tsx
 "use client"
 
+import React from "react"
 import { useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { usePermissions } from "@/hooks/usePermissions"
@@ -30,10 +30,11 @@ export default function RoleLayout({ children }: { children: React.ReactNode }) 
     )
   }
   
+  // NO margin here - let individual role layouts handle it
   return (
     <div className="flex min-h-screen bg-[#F9FAFB]">
       <Navigation />
-      <main className="flex-1 md:ml-[280px]">
+      <main className="flex-1 min-w-0 mt-14 md:mt-0">
         {children}
       </main>
     </div>

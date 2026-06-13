@@ -21,68 +21,70 @@ export default function PriceHistoryTable({
 
   return (
     <div className="overflow-hidden rounded-2xl border">
-      <table className="w-full text-sm">
-        <thead className="bg-muted/40">
-          <tr>
-            <th className="px-5 py-4 text-left">
-              Date
-            </th>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-muted/40">
+            <tr>
+              <th className="whitespace-nowrap px-5 py-4 text-left">
+                Date
+              </th>
 
-            <th className="px-5 py-4 text-left">
-              Type
-            </th>
+              <th className="whitespace-nowrap px-5 py-4 text-left">
+                Type
+              </th>
 
-            <th className="px-5 py-4 text-left">
-              Old Price
-            </th>
+              <th className="whitespace-nowrap px-5 py-4 text-left">
+                Old Price
+              </th>
 
-            <th className="px-5 py-4 text-left">
-              New Price
-            </th>
+              <th className="whitespace-nowrap px-5 py-4 text-left">
+                New Price
+              </th>
 
-            <th className="px-5 py-4 text-left">
-              Margin
-            </th>
+              <th className="whitespace-nowrap px-5 py-4 text-left">
+                Margin
+              </th>
 
-            <th className="px-5 py-4 text-left">
-              Changed By
-            </th>
-          </tr>
-        </thead>
+              <th className="whitespace-nowrap px-5 py-4 text-left">
+                Changed By
+              </th>
+            </tr>
+          </thead>
 
-        <tbody>
-          {history.map((item, index) => (
-            <tr
-              key={index}
-              className="border-t"
-            >
-              <td className="px-5 py-4">
-                {item.change_date}
-              </td>
+          <tbody>
+            {history.map((item, index) => (
+              <tr
+                key={index}
+                className="border-t"
+              >
+                <td className="whitespace-nowrap px-5 py-4">
+                  {item.change_date}
+                </td>
 
-              <td className="px-5 py-4">
-                {item.change_type}
-              </td>
+                <td className="whitespace-nowrap px-5 py-4">
+                  {item.change_type}
+                </td>
 
-              <td className="px-5 py-4">
-                ₦{item.old_price ?? 0}
-              </td>
+                <td className="whitespace-nowrap px-5 py-4">
+                  ₦{item.old_price ?? 0}
+                </td>
 
-              <td className="px-5 py-4">
-                ₦{item.new_price ?? 0}
-              </td>
+                <td className="whitespace-nowrap px-5 py-4">
+                  ₦{item.new_price ?? 0}
+                </td>
 
-              <td className="px-5 py-4">
-                {item.new_margin ?? 0}%
-              </td>
+                <td className="whitespace-nowrap px-5 py-4">
+                  {item.new_margin ?? 0}%
+                </td>
 
-              <td className="px-5 py-4">
-                {item.changed_by}
+                <td className="whitespace-nowrap px-5 py-4">
+                  {item.changed_by}
               </td>
             </tr>
           ))}
         </tbody>
-      </table>
+        </table>
+      </div>
     </div>
   )
 }

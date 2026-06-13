@@ -75,19 +75,19 @@ export function SaleDetailCard({ sale, onCancel }: SaleDetailCardProps) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                   Product
                 </th>
-                <th className="px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                <th className="whitespace-nowrap px-5 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                   SKU
                 </th>
-                <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                <th className="whitespace-nowrap px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                   Quantity
                 </th>
-                <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                <th className="whitespace-nowrap px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                   Unit Price
                 </th>
-                <th className="px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+                <th className="whitespace-nowrap px-5 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                   Total
                 </th>
               </tr>
@@ -95,11 +95,11 @@ export function SaleDetailCard({ sale, onCancel }: SaleDetailCardProps) {
             <tbody>
               {sale.items.map((item, index) => (
                 <tr key={index} className="border-b border-slate-100 hover:bg-slate-50">
-                  <td className="px-5 py-4 font-medium text-slate-900">{item.product_name}</td>
-                  <td className="px-5 py-4 font-mono text-xs text-slate-500">{item.sku || "—"}</td>
-                  <td className="px-5 py-4 text-right text-slate-600">{item.quantity}</td>
-                  <td className="px-5 py-4 text-right text-slate-600">₦{item.unit_price.toLocaleString()}</td>
-                  <td className="px-5 py-4 text-right font-semibold text-slate-900">
+                  <td className="whitespace-nowrap px-5 py-4 font-medium text-slate-900">{item.product_name}</td>
+                  <td className="whitespace-nowrap px-5 py-4 font-mono text-xs text-slate-500">{item.sku || "\u2014"}</td>
+                  <td className="whitespace-nowrap px-5 py-4 text-right text-slate-600">{item.quantity}</td>
+                  <td className="whitespace-nowrap px-5 py-4 text-right text-slate-600">₦{item.unit_price.toLocaleString()}</td>
+                  <td className="whitespace-nowrap px-5 py-4 text-right font-semibold text-slate-900">
                     ₦{item.line_total.toLocaleString()}
                   </td>
                 </tr>
@@ -107,44 +107,44 @@ export function SaleDetailCard({ sale, onCancel }: SaleDetailCardProps) {
             </tbody>
             <tfoot className="border-t border-slate-200 bg-slate-50">
               <tr>
-                <td colSpan={4} className="px-5 py-4 text-right font-semibold text-slate-900">
+                <td colSpan={4} className="whitespace-nowrap px-5 py-4 text-right font-semibold text-slate-900">
                   Subtotal
                 </td>
-                <td className="px-5 py-4 text-right font-semibold text-slate-900">
+                <td className="whitespace-nowrap px-5 py-4 text-right font-semibold text-slate-900">
                   ₦{sale.subtotal.toLocaleString()}
                 </td>
               </tr>
               {sale.discount > 0 && (
                 <tr>
-                  <td colSpan={4} className="px-5 py-4 text-right text-sm text-slate-600">
+                  <td colSpan={4} className="whitespace-nowrap px-5 py-4 text-right text-sm text-slate-600">
                     Discount
                   </td>
-                  <td className="px-5 py-4 text-right text-sm text-red-600">
+                  <td className="whitespace-nowrap px-5 py-4 text-right text-sm text-red-600">
                     -₦{sale.discount.toLocaleString()}
                   </td>
                 </tr>
               )}
               <tr>
-                <td colSpan={4} className="px-5 py-4 text-right font-semibold text-slate-900">
+                <td colSpan={4} className="whitespace-nowrap px-5 py-4 text-right font-semibold text-slate-900">
                   Tax ({sale.tax})
                 </td>
-                <td className="px-5 py-4 text-right font-semibold text-slate-900">
+                <td className="whitespace-nowrap px-5 py-4 text-right font-semibold text-slate-900">
                   ₦{sale.tax.toLocaleString()}
                 </td>
               </tr>
               <tr className="bg-slate-100">
-                <td colSpan={4} className="px-5 py-4 text-right text-base font-bold text-slate-900">
+                <td colSpan={4} className="whitespace-nowrap px-5 py-4 text-right text-base font-bold text-slate-900">
                   Total
                 </td>
-                <td className="px-5 py-4 text-right text-base font-bold text-slate-900">
+                <td className="whitespace-nowrap px-5 py-4 text-right text-base font-bold text-slate-900">
                   ₦{sale.total_amount.toLocaleString()}
                 </td>
               </tr>
               <tr>
-                <td colSpan={4} className="px-5 py-4 text-right text-sm text-slate-600">
+                <td colSpan={4} className="whitespace-nowrap px-5 py-4 text-right text-sm text-slate-600">
                   Amount Paid
                 </td>
-                <td className="px-5 py-4 text-right text-sm font-medium text-green-600">
+                <td className="whitespace-nowrap px-5 py-4 text-right text-sm font-medium text-green-600">
                   ₦{sale.amount_paid.toLocaleString()}
                 </td>
               </tr>

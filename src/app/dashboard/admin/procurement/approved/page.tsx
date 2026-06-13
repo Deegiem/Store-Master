@@ -2,25 +2,23 @@
 
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { CheckCircle, Search, Filter, Calendar, Building2, Package, DollarSign, Eye } from "lucide-react"
+import { CheckCircle, Search, Eye } from "lucide-react"
 import { useProcurementStore } from "@/store/useProcurementStore"
 import { usePermissions } from "@/hooks/usePermissions"
+import { useAuthStore } from "@/store/useAuthStore"
 import { ApprovedOrderCard } from "@/components/procurement/ApprovedOrderCard"
 import { ApprovedOrdersSkeleton } from "@/components/procurement/ApprovedOrdersSkeleton"
 import { EmptyApprovedState } from "@/components/procurement/EmptyApprovedState"
 
 export default function ApprovedOrdersPage() {
   const { list, fetchAll, loading } = useProcurementStore()
+  const { profile } = useAuthStore() // Get profile from auth store
   const { 
-    canViewAllProcurement, 
-    canViewOwnProcurement, 
-    canViewBranchProcurement,
     isAdmin,
     isFinance,
     isPurchase,
     isManager,
-    userBranchId,
-    role
+    userBranchId
   } = usePermissions()
   
   const [searchTerm, setSearchTerm] = useState("")
@@ -28,42 +26,33 @@ export default function ApprovedOrdersPage() {
   const [dateRange, setDateRange] = useState({ start: "", end: "" })
 
   useEffect(() => {
-    // Fetch based on user role
-    if (isAdmin || isFinance) {
-      // Admin/Finance: view all procurement
-      fetchAll()
-    } else if (isPurchase) {
-      // Purchase Manager: view only their own POs
-      fetchAll({ created_by: useProcurementStore.getState().filters?.created_by })
-    } else if (isManager) {
-      // Store Manager: view branch procurement
-      fetchAll({ branch_id: userBranchId })
-    } else {
-      fetchAll()
+    // API Access Control for viewing approved orders:
+    // - Finance Manager / Admin: Can view all Purchase Orders system-wide
+    // - Purchase Manager: Can only view Purchase Orders they created
+    // - Store Manager: Can only view Purchase Orders for their assigned branch
+    const fetchApprovedOrders = async () => {
+      if (isAdmin || isFinance) {
+        await fetchAll({ status: "Approved" })
+      } else if (isPurchase) {
+        await fetchAll({ status: "Approved", created_by: profile?.id })
+      } else if (isManager && userBranchId) {
+        await fetchAll({ branch_id: userBranchId, status: "Approved" })
+      }
     }
-  }, [fetchAll, isAdmin, isFinance, isPurchase, isManager, userBranchId])
+    
+    fetchApprovedOrders()
+  }, [fetchAll, isAdmin, isFinance, isPurchase, isManager, userBranchId, profile?.id])
 
-  // Filter approved orders based on user permissions
+  // Filter approved orders from the list
   let approvedOrders = list.filter(order => order.status === "Approved")
-  
-  // Additional filtering based on role (in case API returned extra data)
-  if (isPurchase) {
-    // Purchase manager should only see their own POs
-    approvedOrders = approvedOrders.filter(order => order.created_by === useProcurementStore.getState().filters?.created_by)
-  }
-  
-  if (isManager) {
-    // Manager should only see their branch's POs
-    approvedOrders = approvedOrders.filter(order => order.target_branch === userBranchId)
-  }
 
-  // Check if user can view this page
-  const canViewApprovedOrders = canViewAllProcurement || canViewOwnProcurement || canViewBranchProcurement || isAdmin || isFinance || isPurchase || isManager
+  // Permission check
+  const canViewApprovedOrders = isAdmin || isFinance || isPurchase || isManager
 
   if (!canViewApprovedOrders) {
     return (
-      <div className="min-h-screen bg-[#F9FAFB] p-6">
-        <div className="mx-auto max-w-7xl">
+      <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+        <div className="mx-auto max-w-6xl space-y-6">
           <div className="rounded-sm border border-red-200 bg-red-50 p-6 text-center">
             <Eye className="mx-auto h-12 w-12 text-red-400" />
             <p className="mt-4 text-lg font-semibold text-red-600">Access Denied</p>
@@ -77,7 +66,7 @@ export default function ApprovedOrdersPage() {
   }
 
   // Get unique branches for filter (only for admin/finance)
-  const branches = ["all", ...new Set(approvedOrders.map(order => order.target_branch))]
+  const branches = ["all", ...new Set(approvedOrders.map(order => order.target_branch).filter(Boolean))]
 
   const filteredOrders = approvedOrders.filter(order => {
     const matchesSearch = !searchTerm || 
@@ -97,15 +86,15 @@ export default function ApprovedOrdersPage() {
     return matchesSearch && matchesBranch && matchesDate
   })
 
-  const totalValue = filteredOrders.reduce((sum, order) => sum + order.total_amount, 0)
+  const totalValue = filteredOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0)
 
   if (loading.list) {
     return <ApprovedOrdersSkeleton />
   }
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
+    <div className="min-h-screen bg-[#F9FAFB] p-2 lg:p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -140,7 +129,7 @@ export default function ApprovedOrdersPage() {
           </div>
           <div className="rounded-sm border border-slate-200 bg-white p-5">
             <p className="text-sm text-slate-500">Total Value</p>
-            <p className="text-2xl font-bold text-slate-900">₦{approvedOrders.reduce((s, o) => s + o.total_amount, 0).toLocaleString()}</p>
+            <p className="text-2xl font-bold text-slate-900">₦{approvedOrders.reduce((s, o) => s + (o.total_amount || 0), 0).toLocaleString()}</p>
           </div>
           <div className="rounded-sm border border-slate-200 bg-white p-5">
             <p className="text-sm text-slate-500">Unique Suppliers</p>
@@ -152,7 +141,7 @@ export default function ApprovedOrdersPage() {
           </div>
         </div>
 
-        {/* Filters - Only show branch filter for admin/finance */}
+        {/* Filters */}
         <div className="flex flex-col gap-4 rounded-sm border border-slate-200 bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -166,8 +155,7 @@ export default function ApprovedOrdersPage() {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            {/* Only show branch filter for admin/finance who can see multiple branches */}
-            {(isAdmin || isFinance) && (
+            {(isAdmin || isFinance) && branches.length > 1 && (
               <select
                 value={branchFilter}
                 onChange={(e) => setBranchFilter(e.target.value)}
@@ -206,8 +194,10 @@ export default function ApprovedOrdersPage() {
         )}
 
         {/* Content */}
-        {filteredOrders.length === 0 ? (
-          <EmptyApprovedState hasFilters={!!(searchTerm || branchFilter !== "all" || dateRange.start || dateRange.end)} />
+        {approvedOrders.length === 0 ? (
+          <EmptyApprovedState hasFilters={false} />
+        ) : filteredOrders.length === 0 ? (
+          <EmptyApprovedState hasFilters={true} />
         ) : (
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {filteredOrders.map((order, index) => (

@@ -14,14 +14,14 @@ import { InventorySkeleton } from "@/components/inventory/InventorySkeleton"
 export default function InventoryDashboardPage() {
   const router = useRouter()
   const { profile, isLoading: authLoading } = useAuthStore()
-  const { isAdmin, isManager } = usePermissions()
+  const { isAdmin, isManager, isPurchase } = usePermissions()
   const { branches, fetchBranches, branchloading } = useBranchStore()
 
   useEffect(() => {
-    if (!authLoading && isAdmin) {
+    if (!authLoading && isAdmin || isPurchase) {
       fetchBranches()
     }
-  }, [fetchBranches, isAdmin, authLoading])
+  }, [fetchBranches, isAdmin, isPurchase, authLoading])
 
   // For manager, redirect directly to their assigned branch inventory
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function InventoryDashboardPage() {
     }
   }, [isManager, profile?.branchId, router, authLoading])
 
-  if (!isAdmin && !isManager) {
+  if (!isAdmin && !isManager && !isPurchase) {
     return <AccessDenied message="You don't have permission to view inventory" />
   }
 

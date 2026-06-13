@@ -9,7 +9,7 @@ import {
   Building2,
   Activity,
   Users,
-  DollarSign
+  DollarSign,
 } from "lucide-react"
 
 import { useDashboardData } from "@/hooks/useDashboardData"
@@ -18,6 +18,7 @@ import { BranchPerformance } from "@/components/admin-dash-components/BranchPerf
 import { AdminAuditTable } from "@/components/admin-dash-components/AdminAuditTable"
 import { useUserStore } from "@/store/useUserStore";
 import { useEffect } from "react";
+import { useAdminStore } from "@/store/adminStore";
 // import { SharePreviewButton } from "@/components/SharePreviewButton";
 
 export default function DashboardPage() {
@@ -31,14 +32,21 @@ export default function DashboardPage() {
   } = useDashboardData()
 
   const { users, fetchUsers } = useUserStore()
+  const { systemSettings, fetchSystemSettings } = useAdminStore()
 
   useEffect(() => {
     fetchUsers()
-  }, [fetchUsers])
+    if (!systemSettings) {
+      fetchSystemSettings()
+    }
+  }, [fetchUsers, fetchSystemSettings, systemSettings])
+
+  const currencySymbol = systemSettings?.currency_symbol || "₦"
+
 
   if (loading || !dashboard) {
     return (
-      <div className="p-6">
+      <div className="p-2">
         <div className="flex items-center justify-center rounded-sm border border-slate-200 bg-white p-12">
           <div className="text-center">
             <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-[#003e9d] border-t-transparent"></div>
@@ -52,7 +60,7 @@ export default function DashboardPage() {
   const stats = [
     {
       title: "Revenue (This Month)",
-      value: `₦${dashboard.revenue.this_month.toLocaleString()}`,
+      value: dashboard.revenue.this_month,  // ← Pass raw number, NOT .toLocaleString()
       icon: DollarSign,
       // trend: dashboard.revenue.last_month ? `+${(((dashboard.revenue.this_month - dashboard.revenue.last_month) / dashboard.revenue.last_month) * 100).toFixed(1)}%` : "+0%",
       // trendUp: dashboard.revenue.this_month >= (dashboard.revenue.last_month ?? 0),
@@ -94,7 +102,7 @@ export default function DashboardPage() {
     },
     {
       title: "Total Orders",
-      value: dashboard.total_orders?.toLocaleString() || 0,
+      value: dashboard.total_orders ?? 0,
       icon: Activity,
       color: "from-indigo-500 to-indigo-600",
       bgColor: "bg-indigo-50",
@@ -103,8 +111,8 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div className="p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
+    <div className="p-2">
+      <div className="mx-auto max-w-9xl space-y-6">
         {/* HEADER */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -144,6 +152,7 @@ export default function DashboardPage() {
               bgColor={stat.bgColor}
               iconColor={stat.iconColor}
               delay={index * 0.05}
+              currencySymbol={currencySymbol}
             />
           ))}
         </div>

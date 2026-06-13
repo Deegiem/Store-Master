@@ -39,8 +39,8 @@ export default function UserAuditListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
+    <div className="min-h-screen bg-[#F9FAFB] p-2">
+      <div className="mx-auto max-w-9xl space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

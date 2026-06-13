@@ -2,9 +2,9 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { 
-  UserCircle, 
-  Mail, 
+import {
+  UserCircle,
+  Mail,
   Shield,
   Activity,
 } from "lucide-react"
@@ -13,10 +13,9 @@ import type { UserDetails } from "@/types/admin"
 interface UserInfoCardProps {
   user: UserDetails
   totalActions?: number
-  userId?: string
 }
 
-export function UserInfoCard({ user, totalActions, userId }: UserInfoCardProps) {
+export function UserInfoCard({ user, totalActions }: UserInfoCardProps) {
   const stats = [
     { label: "Total Actions", value: totalActions || 0, icon: Activity, color: "text-blue-600" },
     { label: "Role", value: user.role || "Unknown", icon: Shield, color: "text-purple-600" },
@@ -41,22 +40,23 @@ export function UserInfoCard({ user, totalActions, userId }: UserInfoCardProps) 
               <Mail className="h-3.5 w-3.5 text-slate-400" />
               <p className="text-sm text-slate-600">{user.email}</p>
             </div>
-            {userId && (
-              <p className="mt-1 font-mono text-xs text-slate-400">
-                User ID: {userId}
-              </p>
-            )}
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:flex sm:gap-6">
+        <div className="grid grid-cols-1 gap-3 xs:grid-cols-2 sm:flex sm:gap-6">
           {stats.map((stat) => (
-            <div key={stat.label} className="text-center sm:text-left">
+            <div
+              key={stat.label}
+              className="flex flex-col items-center rounded-sm border border-slate-100 p-3 text-center sm:border-0 sm:p-0 sm:items-start sm:text-left"
+            >
               <div className="flex items-center gap-1.5">
                 <stat.icon className={`h-4 w-4 ${stat.color}`} />
                 <p className="text-xs text-slate-500">{stat.label}</p>
               </div>
-              <p className="mt-1 text-lg font-semibold text-slate-900">{stat.value}</p>
+
+              <p className="mt-1 text-lg font-semibold text-slate-900">
+                {stat.value}
+              </p>
             </div>
           ))}
         </div>
